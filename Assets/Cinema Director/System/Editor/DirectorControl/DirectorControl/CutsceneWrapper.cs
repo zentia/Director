@@ -16,7 +16,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
 	{
 		get
 		{
-			return this.duration;
+			return duration;
 		}
 		set
 		{
@@ -52,7 +52,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
 	{
 		get
 		{
-			return this.TrackGroupMap.Values;
+			return TrackGroupMap.Values;
 		}
 	}
 

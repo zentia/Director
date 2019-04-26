@@ -67,45 +67,16 @@ public class DirectorControl : TimeArea
 	private Rect sidebarControlArea;
 
 	private Vector2 mouseDownPosition = Vector2.zero;
-
 	private bool isBoxSelecting;
-
 	private Rect selectionBox;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler PlayCutscene;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler PauseCutscene;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler StopCutscene;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler ScrubCutscene;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler SetCutsceneTime;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler EnterPreviewMode;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler ExitPreviewMode;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event DirectorDragHandler DragPerformed;
-
-	[method: CompilerGenerated]
-	[CompilerGenerated]
 	public event CutsceneEventHandler RepaintRequest;
 
 	public ResizeOption ResizeOption
@@ -160,7 +131,7 @@ public class DirectorControl : TimeArea
 				}
 				else if (this.directorState.IsInPreviewMode && !value)
 				{
-					this.ExitPreviewMode(this, new CinemaDirectorArgs(this.cutscene.Behaviour));
+					this.ExitPreviewMode(this, new CinemaDirectorArgs(cutscene.Behaviour));
 				}
 			}
 			directorState.IsInPreviewMode = value;
@@ -442,12 +413,12 @@ public class DirectorControl : TimeArea
 
 	private void drawBackground()
 	{
-		GUI.Box(this.trackBodyBackground, GUIContent.none, "AnimationKeyframeBackground");
-		base.rect = this.trackBodyBackgroundNoVerticalScrollbar;
-		base.BeginViewGUI(false);
-		base.SetTickMarkerRanges();
+		GUI.Box(trackBodyBackground, GUIContent.none, "AnimationKeyframeBackground");
+		rect = trackBodyBackgroundNoVerticalScrollbar;
+		BeginViewGUI(false);
+		SetTickMarkerRanges();
 		DrawMajorTicks(trackBodyBackground, frameRate);
-		base.EndViewGUI();
+		EndViewGUI();
 	}
 
 	private void updateControlLayout(Rect controlArea)
@@ -484,7 +455,7 @@ public class DirectorControl : TimeArea
 		{
 			timeRuleArea = new Rect(track_header_area_width + sidebarControlArea.width, controlArea.y, controlArea.width - this.track_header_area_width - 15f - this.sidebarControlArea.width, 17f);
 			bodyArea = new Rect(controlArea.x, headerArea.y + 17f, controlArea.width - 15f, controlArea.height - 17f - 15f);
-			trackBodyBackground = new Rect(controlArea.x + this.track_header_area_width + this.sidebarControlArea.width, this.bodyArea.y, controlArea.width - 15f - this.track_header_area_width - this.sidebarControlArea.width, controlArea.height - 17f - 15f);
+			trackBodyBackground = new Rect(controlArea.x + this.track_header_area_width + sidebarControlArea.width, this.bodyArea.y, controlArea.width - 15f - this.track_header_area_width - this.sidebarControlArea.width, controlArea.height - 17f - 15f);
 			trackBodyBackgroundNoVerticalScrollbar = new Rect(controlArea.x + track_header_area_width + sidebarControlArea.width, bodyArea.y, controlArea.width - 15f - track_header_area_width - sidebarControlArea.width, controlArea.height - 17f);
 			trackBodyBackgroundNoScrollbars = new Rect(controlArea.x + this.track_header_area_width + this.sidebarControlArea.width, this.bodyArea.y, controlArea.width - 15f - this.track_header_area_width - this.sidebarControlArea.width, controlArea.height - 17f - 15f);
 			verticalScrollbarArea = new Rect(this.bodyArea.x + this.bodyArea.width, this.bodyArea.y, 15f, controlArea.height - 17f - 15f);
@@ -883,7 +854,7 @@ public class DirectorControl : TimeArea
 			{
 				return;
 			}
-			GUIUtility.hotControl=(controlID);
+			GUIUtility.hotControl = controlID;
 			Vector2 mousePosition = Event.current.mousePosition;
 			mousePosition.x -= timeRulerArea.x;
 			InPreviewMode = true;
@@ -948,17 +919,17 @@ public class DirectorControl : TimeArea
 		};
 		EditorGUILayout.BeginHorizontal(EditorStyles.toolbar, array);
 		GUILayout.FlexibleSpace();
-		if (this.cutscene != null && this.cutscene.IsPlaying)
+		if (cutscene != null && cutscene.IsPlaying)
 		{
 			if (GUILayout.Button(pauseButton, EditorStyles.toolbarButton, new GUILayoutOption[0]))
 			{
-				this.PauseCutscene(this, new CinemaDirectorArgs(this.cutscene.Behaviour));
+				PauseCutscene(this, new CinemaDirectorArgs(cutscene.Behaviour));
 			}
 		}
-		else if (GUILayout.Button(this.playButton, EditorStyles.toolbarButton, new GUILayoutOption[0]) && this.cutscene != null)
+		else if (GUILayout.Button(playButton, EditorStyles.toolbarButton, new GUILayoutOption[0]) && this.cutscene != null)
 		{
-			this.InPreviewMode = true;
-			this.PlayCutscene(this, new CinemaDirectorArgs(this.cutscene.Behaviour));
+			InPreviewMode = true;
+			PlayCutscene(this, new CinemaDirectorArgs(this.cutscene.Behaviour));
 		}
 		if (GUILayout.Button(stopButton, EditorStyles.toolbarButton, new GUILayoutOption[0]) && cutscene != null)
 		{
@@ -993,7 +964,7 @@ public class DirectorControl : TimeArea
 		});
 		if (cutscene != null && num != cutscene.RunningTime)
 		{
-			this.InPreviewMode = true;
+			InPreviewMode = true;
 			num = Mathf.Max(num, 0f);
 			directorState.ScrubberPosition = num;
 			this.SetCutsceneTime(this, new CinemaDirectorArgs(this.cutscene.Behaviour, num));

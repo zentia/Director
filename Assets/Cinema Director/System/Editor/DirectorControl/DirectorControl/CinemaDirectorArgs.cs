@@ -15,6 +15,6 @@ public class CinemaDirectorArgs : EventArgs
 	public CinemaDirectorArgs(Behaviour cutscene, float time)
 	{
 		this.cutscene = cutscene;
-		this.timeArg = time;
+		timeArg = time;
 	}
 }

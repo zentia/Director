@@ -117,7 +117,7 @@ public class ZoomableArea
 	{
 		get
 		{
-			bool flag = this.hRangeMin > float.NegativeInfinity && this.hRangeMax < float.PositiveInfinity;
+			bool flag = hRangeMin > float.NegativeInfinity && this.hRangeMax < float.PositiveInfinity;
 			return new Bounds(new Vector3((!flag) ? (this.HScrollMax * 0.5f) : ((this.hRangeMin + this.hRangeMax) * 0.5f), 0f, 0f), new Vector3((!flag) ? this.HScrollMax : (this.hRangeMax - this.hRangeMin), 2f, 1f));
 		}
 	}
@@ -504,7 +504,7 @@ public class ZoomableArea
 
 	private bool IsZoomEvent()
 	{
-		return (int)Event.current.button == 1 && Event.current.alt;
+		return Event.current.button == 1 && Event.current.alt;
 	}
 
 	private void Pan()
@@ -599,7 +599,7 @@ public class ZoomableArea
 			num = -num;
 		}
 		float num2 = Mathf.Max(0.01f, 1f + num * 0.01f);
-		if (!this.m_HRangeLocked)
+		if (!m_HRangeLocked)
 		{
 			this.m_Translation.x = this.m_Translation.x - zoomAround.x * (num2 - 1f) * this.m_Scale.x;
 			this.m_Scale.x = this.m_Scale.x * num2;
