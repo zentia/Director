@@ -11,8 +11,8 @@ namespace DirectorEditor
 
 		public SidebarControlEventArgs(Behaviour behaviour, SidebarControl control)
 		{
-			this.Behaviour = behaviour;
-			this.SidebarControl = control;
+			Behaviour = behaviour;
+			SidebarControl = control;
 		}
 	}
 }

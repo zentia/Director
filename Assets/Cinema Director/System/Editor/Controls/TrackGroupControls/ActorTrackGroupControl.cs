@@ -2,7 +2,7 @@
 using UnityEngine;
 using CinemaDirector;
 
-[CutsceneTrackGroupAttribute(typeof(ActorTrackGroup))]
+[CutsceneTrackGroup(typeof(ActorTrackGroup))]
 public class ActorTrackGroupControl : GenericTrackGroupControl
 {
     public override void Initialize()

@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// The default track group control.
 /// </summary>
-[CutsceneTrackGroupAttribute(typeof(TrackGroup))]
+[CutsceneTrackGroup(typeof(TrackGroup))]
 public class GenericTrackGroupControl : TrackGroupControl
 {
     /// <summary>
@@ -52,7 +52,7 @@ public class GenericTrackGroupControl : TrackGroupControl
         if (trackData != null)
         {
             GameObject item = CutsceneItemFactory.CreateTimelineTrack(trackData.TrackGroup, trackData.Type, trackData.Label).gameObject;
-            this.isExpanded = true;
+            isExpanded = true;
             Undo.RegisterCreatedObjectUndo(item, string.Format("Create {0}", item.name));
         }
     }

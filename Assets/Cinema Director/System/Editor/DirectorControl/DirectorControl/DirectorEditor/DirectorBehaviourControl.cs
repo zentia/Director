@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,8 +7,6 @@ namespace DirectorEditor
 	{
 		private Behaviour behaviour;
 
-		[method: CompilerGenerated]
-		[CompilerGenerated]
 		public event DirectorBehaviourControlHandler DeleteRequest;
 
 		public Behaviour Behaviour
@@ -48,9 +44,9 @@ namespace DirectorEditor
 
 		public void RequestDelete(DirectorBehaviourControlEventArgs args)
 		{
-			if (this.DeleteRequest != null)
+			if (DeleteRequest != null)
 			{
-				this.DeleteRequest(this, args);
+				DeleteRequest(this, args);
 			}
 		}
 	}

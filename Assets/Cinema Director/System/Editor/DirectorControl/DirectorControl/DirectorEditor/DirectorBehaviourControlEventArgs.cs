@@ -11,8 +11,8 @@ namespace DirectorEditor
 
 		public DirectorBehaviourControlEventArgs(Behaviour behaviour, DirectorBehaviourControl control)
 		{
-			this.Behaviour = behaviour;
-			this.Control = control;
+			Behaviour = behaviour;
+			Control = control;
 		}
 	}
 }

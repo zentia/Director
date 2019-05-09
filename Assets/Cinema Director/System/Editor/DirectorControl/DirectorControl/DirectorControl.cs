@@ -431,7 +431,7 @@ public class DirectorControl : TimeArea
 		switch (Event.current.GetTypeForControl(controlID))
 		{
 		case EventType.MouseDown:
-			if (sidebarControlArea.Contains(Event.current.mousePosition) && (int)Event.current.button == 0)
+			if (sidebarControlArea.Contains(Event.current.mousePosition) && Event.current.button == 0)
 			{
 				GUIUtility.hotControl=(controlID);
 				Event.current.Use();
@@ -478,16 +478,16 @@ public class DirectorControl : TimeArea
 		}
 		foreach (SidebarControl expr_93 in list2)
 		{
-			expr_93.DeleteRequest -= new DirectorBehaviourControlHandler(this.control_DeleteRequest);
-			expr_93.DuplicateRequest -= new SidebarControlHandler(this.sidebarControl_Duplicate);
+			expr_93.DeleteRequest -= new DirectorBehaviourControlHandler(control_DeleteRequest);
+			expr_93.DuplicateRequest -= new SidebarControlHandler(sidebarControl_Duplicate);
 			expr_93.SelectRequest -= new SidebarControlHandler(this.sidebarControl_SelectRequest);
 		}
 		foreach (TrackItemControl current in list3)
 		{
 			timelineControls.Add(current);
 			current.DeleteRequest += control_DeleteRequest;
-			current.RequestTrackItemTranslate += new TranslateTrackItemEventHandler(this.itemControl_RequestTrackItemTranslate);
-			current.TrackItemTranslate += new TranslateTrackItemEventHandler(this.itemControl_TrackItemTranslate);
+			current.RequestTrackItemTranslate += new TranslateTrackItemEventHandler(itemControl_RequestTrackItemTranslate);
+			current.TrackItemTranslate += new TranslateTrackItemEventHandler(itemControl_TrackItemTranslate);
 			current.TrackItemUpdate += new TrackItemEventHandler(this.itemControl_TrackItemUpdate);
 		}
 		foreach (TrackItemControl current2 in list4)
@@ -814,13 +814,6 @@ public class DirectorControl : TimeArea
 			GUI.enabled = true;
 			num += height;
 		}
-		var rollRect = new Rect(area.x, area.y, track_header_area_width, area.height);
-		switch(Event.current.type)
-		{
-			case EventType.ScrollWheel:
-
-			break;
-		}
 	}
 
     public float PixelToTime(float pixelX)
@@ -977,9 +970,9 @@ public class DirectorControl : TimeArea
 		float num = 0f;
 		foreach (TrackGroupWrapper current in cutscene.TrackGroups)
 		{
-			if (this.trackGroupBinding.ContainsKey(current))
+			if (trackGroupBinding.ContainsKey(current))
 			{
-				TrackGroupControl trackGroupControl = this.trackGroupBinding[current];
+				TrackGroupControl trackGroupControl = trackGroupBinding[current];
 				num += trackGroupControl.GetHeight();
 			}
 		}

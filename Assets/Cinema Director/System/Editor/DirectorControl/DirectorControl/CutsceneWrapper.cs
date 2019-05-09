@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,7 +39,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
 	{
 		get
 		{
-			return this.isPlaying;
+			return isPlaying;
 		}
 		set
 		{
@@ -85,6 +84,6 @@ public class CutsceneWrapper : UnityBehaviourWrapper
 
 	public bool ContainsTrackGroup(Behaviour behaviour, out TrackGroupWrapper trackGroupWrapper)
 	{
-		return this.TrackGroupMap.TryGetValue(behaviour, out trackGroupWrapper);
+		return TrackGroupMap.TryGetValue(behaviour, out trackGroupWrapper);
 	}
 }

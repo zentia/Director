@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,13 +10,7 @@ namespace DirectorEditor
 		public bool isExpanded;
 
 		public int expandedSize = 2;
-
-		[method: CompilerGenerated]
-		[CompilerGenerated]
 		public event SidebarControlHandler SelectRequest;
-
-		[method: CompilerGenerated]
-		[CompilerGenerated]
 		public event SidebarControlHandler DuplicateRequest;
 
 		public int[] Ordinal
