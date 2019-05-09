@@ -990,10 +990,10 @@ public class DirectorControl : TimeArea
 	{
 		if (cutscene != null)
 		{
-			base.SetShownHRangeInsideMargins(0f, cutscene.Duration);
+			SetShownHRangeInsideMargins(0f, cutscene.Duration);
 			return;
 		}
-		base.SetShownHRangeInsideMargins(0f, 60f);
+		SetShownHRangeInsideMargins(0f, 60f);
 	}
 
 	public void ZoomIn()

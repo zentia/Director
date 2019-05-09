@@ -70,7 +70,7 @@ public class TimeArea : ZoomableArea
 		base.hRangeLocked = this.settings.hRangeLocked;
 		base.hRangeMin = this.settings.HorizontalRangeMin;
 		base.hRangeMax = this.settings.hRangeMax;
-		base.scaleWithWindow = this.settings.scaleWithWindow;
+		scaleWithWindow = settings.scaleWithWindow;
 		base.hSlider = this.settings.hSlider;
 	}
 

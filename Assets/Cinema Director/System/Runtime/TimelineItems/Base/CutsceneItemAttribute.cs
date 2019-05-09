@@ -1,4 +1,3 @@
-// Cinema Suite 2014
 using System;
 
 namespace CinemaDirector

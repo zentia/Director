@@ -2,7 +2,7 @@
 
 namespace CinemaDirector
 {
-    [CutsceneItemAttribute("Animation", "Blend Animation", CutsceneItemGenre.ActorItem)]
+    [CutsceneItem("Animation", "Blend Animation", CutsceneItemGenre.ActorItem)]
     public class BlendAnimationEvent : CinemaActorEvent
     {
         public string Animation = string.Empty;

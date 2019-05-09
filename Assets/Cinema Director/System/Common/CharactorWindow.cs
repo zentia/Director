@@ -287,7 +287,7 @@ public class NpcWindow : EditorWindow
     {
         if (controlID == GUIUtility.keyboardControl)
         {
-            if (Event.current.type == UnityEngine.EventType.KeyUp && (Event.current.modifiers == EventModifiers.Control || Event.current.modifiers == EventModifiers.Command))
+            if (Event.current.type == EventType.KeyUp && (Event.current.modifiers == EventModifiers.Control || Event.current.modifiers == EventModifiers.Command))
             {
                 if (Event.current.keyCode == KeyCode.C)
                 {

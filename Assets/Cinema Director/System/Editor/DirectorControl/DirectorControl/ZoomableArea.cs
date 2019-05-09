@@ -237,7 +237,7 @@ public class ZoomableArea
 				if (m_ScaleWithWindow)
 				{
 					this.m_DrawArea = rect;
-					this.shownAreaInsideMargins = this.m_LastShownAreaInsideMargins;
+					this.shownAreaInsideMargins = m_LastShownAreaInsideMargins;
 				}
 				else
 				{
@@ -273,7 +273,7 @@ public class ZoomableArea
 	{
 		get
 		{
-			return this.m_ScaleWithWindow;
+			return m_ScaleWithWindow;
 		}
 		set
 		{
@@ -297,7 +297,7 @@ public class ZoomableArea
 	{
 		get
 		{
-			return new Rect(-this.m_Translation.x / this.m_Scale.x, -(this.m_Translation.y - this.drawRect.height) / this.m_Scale.y, this.drawRect.width / this.m_Scale.x, this.drawRect.height / -this.m_Scale.y);
+			return new Rect(-m_Translation.x / this.m_Scale.x, -(this.m_Translation.y - this.drawRect.height) / this.m_Scale.y, this.drawRect.width / this.m_Scale.x, this.drawRect.height / -this.m_Scale.y);
 		}
 		set
 		{
@@ -312,7 +312,7 @@ public class ZoomableArea
 	{
 		get
 		{
-			return this.shownAreaInsideMarginsInternal;
+			return shownAreaInsideMarginsInternal;
 		}
 		set
 		{

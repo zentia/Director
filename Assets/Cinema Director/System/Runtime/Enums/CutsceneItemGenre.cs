@@ -1,10 +1,5 @@
-﻿// Cinema Suite 2014
-
-namespace CinemaDirector
+﻿namespace CinemaDirector
 {
-    /// <summary>
-    /// An enumeration of Cutscene Item Genres.
-    /// </summary>
     public enum CutsceneItemGenre
     {
         ActorItem,

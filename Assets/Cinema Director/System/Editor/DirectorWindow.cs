@@ -206,8 +206,6 @@ public class DirectorWindow : EditorWindow
         }
     }
 
-    
-
     void directorControl_ExitPreviewMode(object sender, CinemaDirectorArgs e)
     {
         Cutscene c = e.cutscene as Cutscene;
