@@ -96,10 +96,9 @@ namespace CinemaDirector
                     var runningActions = ActionService.instance.HistoryRunningActions;
                     if (runningActions.Count > 0)
                     {
-                        var runningAction = runningActions[runningActions.Count - 1];
-                        CreateAge(runningAction);
+                        cutscene = runningActions[runningActions.Count - 1];
                         DirectorControl_PlayCutscene(directorControl, new CinemaDirectorArgs(cutscene));
-                        cutscene.PlantingBomb(runningAction.Length, DestroyCutscene);
+                        cutscene.PlantingBomb(cutscene.Duration, DestroyCutscene);
                     }
                 }
             }
@@ -140,8 +139,8 @@ namespace CinemaDirector
             Undo.undoRedoPerformed += UndoRedoPerformed;
             AddGlobalEventHandler(OnModifierKeysChanged);
             EditorHooker.OnEditorFocusChanged += OnEditorFocusChanged;
-            DirectorEvent.ExecuteCoroutines.AddListener(ExecuteCoroutines);
-            DirectorEvent.StopCoroutines.AddListener(DestroyCoroutines);
+            DirectorEvent.StartCoroutine.AddListener(ExecuteCoroutines);
+            DirectorEvent.StopCoroutine.AddListener(DestroyCoroutines);
             LoadLastAge();
         }
 
@@ -165,18 +164,18 @@ namespace CinemaDirector
             EditorSceneManager.activeSceneChangedInEditMode -= EditorSceneManagerOnactiveSceneChanged;
             EditorHooker.OnEditorFocusChanged -= OnEditorFocusChanged;
             RemoveGlobalEventHandler(OnModifierKeysChanged);
-            DirectorEvent.ExecuteCoroutines.RemoveListener(ExecuteCoroutines);
-            DirectorEvent.StopCoroutines.RemoveListener(DestroyCoroutines);
+            DirectorEvent.StartCoroutine.RemoveListener(ExecuteCoroutines);
+            DirectorEvent.StopCoroutine.RemoveListener(DestroyCoroutines);
         }
 
-        private void ExecuteCoroutines(CoroutinesEvent coroutinesEvent)
+        private void ExecuteCoroutines(CoroutineEvent coroutineEvent)
         {
-            this.StartCoroutine(coroutinesEvent());
+            this.StartCoroutine(coroutineEvent());
         }
 
-        private void DestroyCoroutines(CoroutinesEvent coroutinesEvent)
+        private void DestroyCoroutines(CoroutineEvent coroutineEvent)
         {
-            this.StopCoroutine(coroutinesEvent());
+            this.StopCoroutine(coroutineEvent());
         }
 
         private void LoadLastAge()
@@ -355,11 +354,9 @@ namespace CinemaDirector
 
         private IEnumerable<string> GetAllAgePathes()
         {
-            Profiler.BeginSample("GetAllAgePathes");
             var pathes = Directory.GetFiles(directorControl.Settings.assetsPath, "*.xml", SearchOption.AllDirectories);
 
             var selecter = pathes.Select(path => path.RelativeTo(directorControl.Settings.assetsPath));
-            Profiler.EndSample();
             return selecter;
         }
 
@@ -509,7 +506,7 @@ namespace CinemaDirector
         [MenuItem(MENU_ITEM, false, 10)]
         private static void ShowWindow()
         {
-            var window = GetWindow(typeof(DirectorWindow));
+            GetWindow(typeof(DirectorWindow));
         }
 
         private void ShowCreateMenu()
@@ -545,10 +542,10 @@ namespace CinemaDirector
             cutscene = DirectorHelper.LoadCutscene(path, true, directorControl.Settings.assetsPath);
         }
 
-        public void CreateAgePlaying(string action)
+        public void OnSelectTimeline(string timelineName)
         {
             CheckModifyCutscene(1);
-            cutscene = DirectorHelper.LoadCutscene($"RawAssets/{action}", false, directorControl.Settings.assetsPath);
+            cutscene = ActionService.instance.HistoryRunningActions.Find(o => o.name == timelineName);
         }
 
         private class TrackGroupContextData

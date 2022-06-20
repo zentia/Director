@@ -17,7 +17,7 @@ namespace AGE
         [Template]
         public int objectSpaceId = -1;
 
-        [AssetReference]
+        [Asset]
         public string resourceName = "";
 
         [SubObject]
@@ -162,7 +162,6 @@ namespace AGE
             }
         }
         
-#if UNITY_EDITOR
         public override void ProcessBlend(Action _action, Track _track, TickEvent _prevEvent, float _blendWeight)
         {
             
@@ -174,10 +173,6 @@ namespace AGE
             {
                 return;
             }
-            if (_action.state == CutsceneState.Playing)
-                return;
-            if (_action.state == CutsceneState.PreviewPlaying && Application.isPlaying)
-                return;
             var particleSystems = _particleObject.GetComponentsInChildren<ParticleSystem>();
             foreach (var particleSystem in particleSystems)
             {
@@ -199,7 +194,6 @@ namespace AGE
                 clip.SampleAnimation(animator.gameObject, _localTime);
             }
         }
-#endif
 
         Quaternion GetRandomRotation(Vector3 rotationRange)
         {

@@ -168,15 +168,10 @@ namespace AGE
                     particleObject.SetActive(true);
                 }
             }
-#if UNITY_EDITOR
             if (particleObject == null)
             {
                 return;
             }
-            if (_action.state == CutsceneState.Playing)
-                return;
-            if (_action.state == CutsceneState.PreviewPlaying && Application.isPlaying)
-                return;
             var particleSystems = particleObject.GetComponentsInChildren<ParticleSystem>();
             foreach (var particleSystem in particleSystems)
             {
@@ -197,7 +192,6 @@ namespace AGE
                 var clip = clips[0];
                 clip.SampleAnimation(animator.gameObject, _localTime);
             }
-#endif
         }
 
 #if UNITY_EDITOR

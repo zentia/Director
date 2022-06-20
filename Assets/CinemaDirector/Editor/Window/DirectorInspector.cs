@@ -10,7 +10,10 @@ namespace CinemaDirector
         protected override object GetTarget()
         {
             var activeObject = DirectorWindow.GetSelection().activeObject;
-            titleContent = new GUIContent(activeObject.GetType().Name);
+            if (activeObject != null)
+            {
+                titleContent = new GUIContent(activeObject.GetType().Name);
+            }
             return activeObject;
         }
 

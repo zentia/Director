@@ -3,7 +3,7 @@
 namespace CinemaDirector
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class AnimationClipAttribute : Attribute
+    public class AssetAttribute : Attribute
     {
     }
 }

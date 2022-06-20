@@ -1,26 +1,26 @@
 using System.Collections.Generic;
 using Assets.Plugins.Common;
 using Assets.Scripts.Framework.AssetService;
-using Assets.Scripts.Framework.ScheduleService;
+using CinemaDirector;
 using UnityEngine;
 
 namespace AGE
 {
-    public class ActionService : Singleton<ActionService>
+    public class ActionService : MonoSingleton<ActionService>
     {
         private DictionaryView<Object, BaseAsset> _objectAssets = new DictionaryView<Object, BaseAsset>(8); //预制件资源
 
         private DictionaryView<Action, AgeAsset> _runingAgeAssets = new DictionaryView<Action, AgeAsset>(8); //AGE资源
-        private CMList<Action> _runningActions = new CMList<Action>(8);
+        private CMList<Cutscene> _runningActions = new CMList<Cutscene>(8);
         private DictionaryView<GameObject, bool> _newGoPools = new DictionaryView<GameObject, bool>();  //空对象池化
 
         private GameObject _goPoolRoot;
 
 #if UNITY_EDITOR
-        public List<string> HistoryRunningActions { get; } = new List<string>();
+        public List<Cutscene> HistoryRunningActions { get; } = new List<Cutscene>();
 #endif
         
-        public bool IsActionValid(Action action)
+        public bool IsActionValid(Cutscene action)
         {
             if(action == null)
             {
@@ -30,7 +30,7 @@ namespace AGE
             return _runningActions.Contains(action) && !action.IsFinished;
         }
 
-        public Action PlayAction(string name, GameObject[] gameobjects, int callbackID = 0, LifeType lifeType = LifeType.UIState, GameObject sceneRoot = null)
+        public Cutscene PlayAction(string name, GameObject[] gameobjects, int callbackID = 0, LifeType lifeType = LifeType.UIState, GameObject sceneRoot = null)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -43,20 +43,20 @@ namespace AGE
             {
                 _runingAgeAssets.Add(asset.Act, asset);
 #if UNITY_EDITOR
-                if (!HistoryRunningActions.Contains(asset.Act.actionName))
+                if (!HistoryRunningActions.Contains(asset.Act))
                 {
-                    HistoryRunningActions.Add(asset.Act.actionName);    
+                    HistoryRunningActions.Add(asset.Act);    
                 }
 #endif
-                Action result = asset.Act;
+                Cutscene result = asset.Act;
 
                 result.callbackID = callbackID;
                 result.enabled = true;
                 result.ResetGameObjects(gameobjects);
                 result.refGameObjectsCount = gameobjects == null ? 0 : gameobjects.Length;
-                result.ForceStart();
-                result.ForceUpdate(0f);
                 result.sceneRoot = sceneRoot;
+                result.CutsceneFinished += OnCutsceneFinished;
+                result.Play();
 
                 _runningActions.Add(result);
 
@@ -67,7 +67,14 @@ namespace AGE
             return null;
         }
 
-		public void StopAction(Action _action,bool forceStop = false)
+        private void OnCutsceneFinished(Cutscene sender, CutsceneEventArgs e)
+        {
+            AssetService.GetInstance().Unload(_runingAgeAssets[sender]);
+            _runingAgeAssets.Remove(sender);
+            _runningActions.Remove(sender);
+        }
+
+		public void StopAction(Cutscene _action,bool forceStop = false)
 		{
 			if(IsActionValid(_action))
             {
@@ -110,10 +117,7 @@ namespace AGE
                 ba.Go.ExtSetActive(true);
                 return ba.Go;
             }
-            else
-            {
-                return Object.Instantiate(prefab, pos, rot);
-            }
+            return Object.Instantiate(prefab, pos, rot);
         }
 
         public GameObject GetNewGameObject()
@@ -163,26 +167,13 @@ namespace AGE
                 _newGoPools.Add(result, true);
             }
 
-			if (result != null && _goPoolRoot != null)
+			if (_goPoolRoot != null)
 			{
 				result.transform.parent = _goPoolRoot.transform;
 			}
             return result;
         }
-
-        public GameObject CreateObject(string assetPath, Vector3 newPos, Quaternion newRot, Vector3 scale)
-        {
-            var asset = AssetService.instance.LoadInstantiateAsset(assetPath);
-            if (asset != null)
-            {
-                asset.Go.transform.position = newPos;
-                asset.Go.transform.rotation = newRot;
-                asset.Go.transform.localScale = scale;
-                return asset.Go;
-            }
-            return null;
-        }
-
+        
         public GameObject InstantiateParticleSystem(string path, Action action, Vector3 pos, Quaternion? rot, Transform parent = null, bool destroyAtActionStop = true, bool applyActionSpeedToParticle = true, int layer = -1, string tag = "", Vector3? scale = null)
         {
             if (string.IsNullOrEmpty(path))
@@ -258,9 +249,8 @@ namespace AGE
             return ba.Go;
         }
 
-#region private
 
-        public override void Init()
+        protected override void Init()
         {
             BaseEventReflection.InitEventTypeDic();
 
@@ -269,14 +259,27 @@ namespace AGE
                 _goPoolRoot = new GameObject();
                 _goPoolRoot.ExtDontDestroyOnLoad();
                 _goPoolRoot.name = "AGETempObjectRoot";
-                ScheduleService.GetInstance().AddHighFrequencyUpdater(OnScheduleHandle);
             }
+            DirectorEvent.StartCoroutine.AddListener(OnStartCoroutine);
+            DirectorEvent.StopCoroutine.AddListener(OnStopCoroutine);
         }
 
-        public override void UnInit()
+        protected override void OnDestroy()
         {
-            ScheduleService.GetInstance().RemoveHighFrequencyUpdater(OnScheduleHandle);
+            base.OnDestroy();
             Dispose();
+            DirectorEvent.StartCoroutine.RemoveListener(OnStartCoroutine);
+            DirectorEvent.StopCoroutine.RemoveListener(OnStopCoroutine);
+        }
+        
+        private void OnStartCoroutine(CoroutineEvent coroutineEvent)
+        {
+            StartCoroutine(coroutineEvent.Invoke());
+        }
+
+        private void OnStopCoroutine(CoroutineEvent coroutineEvent)
+        {
+            StopCoroutine(coroutineEvent.Invoke());
         }
 
         private void Dispose()
@@ -307,44 +310,5 @@ namespace AGE
             _newGoPools.Clear();
             _goPoolRoot.ExtDestroy();
         }
-
-        public void OnScheduleHandle(ScheduleType type, uint id)
-        {
-            if(type == ScheduleType.HighFrequency)
-            {
-                Update();
-            }
-        }
-
-        void Update()
-        {
-            //移除空的
-            for (int i = _runningActions.Count - 1; i >= 0; i--)
-            {
-                if(_runningActions[i] == null)
-                {
-                    _runningActions.RemoveAt(i);
-                    continue;
-                }
-
-                if (_runningActions[i].IsFinished)
-                {
-                    AssetService.GetInstance().Unload(_runingAgeAssets[_runningActions[i]]);
-                    _runingAgeAssets.Remove(_runningActions[i]);
-                    _runningActions.RemoveAt(i);
-                }
-            }
-
-            for (int i = 0, imax = _runningActions.Count; i < imax; i++)
-            {
-                if (_runningActions[i] != null)
-                {
-                    _runningActions[i].Update();
-                }
-            }
-        }
-
-#endregion
-
     }
 }

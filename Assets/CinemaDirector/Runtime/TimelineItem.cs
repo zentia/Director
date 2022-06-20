@@ -1,8 +1,6 @@
 using UnityEngine;
 using System;
 using System.Xml;
-using System.Linq;
-using System.Collections.Generic;
 using Assets.Plugins.Common;
 
 namespace CinemaDirector
@@ -96,14 +94,7 @@ namespace CinemaDirector
         /// </summary>
         public virtual void Initialize()
         {
-            if (!TimelineTrack.enabled)
-            {
-                return;
-            }
-            if (Cutscene.RunningTime > Firetime)
-            {
-                Trigger();
-            }
+            
         }
 
         /// <summary>

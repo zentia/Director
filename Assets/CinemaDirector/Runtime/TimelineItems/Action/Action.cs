@@ -8,7 +8,6 @@ using Sirenix.OdinInspector;
 
 namespace AGE
 {
-#if UNITY_EDITOR
     public enum CutsceneState
     {
         Inactive,
@@ -17,7 +16,7 @@ namespace AGE
         Scrubbing,
         Paused
     }
-#endif
+
     [Serializable]
     public class Action:DirectorObject
     {
@@ -44,8 +43,7 @@ namespace AGE
         #endregion
 
         #region 运行时变量
-        [HideInInspector]
-        public string actionName = "";  
+        public string actionName => name;  
         public bool enabled = true;
         [ReadOnly]
         public float deltaTime = 0.0f;  //
@@ -58,16 +56,13 @@ namespace AGE
         public List<Track> tracks = new List<Track>();  //所有track  可以考虑修改为CMList
         DictionaryObjectView<Track, bool> conditions = new DictionaryObjectView<Track, bool>();  //每个track都的条件,条件为true才能执行  Q：为啥这个不在track内部处理呢
         private bool conditionChanged = true;  //优化处理，条件改变了才重新判断track的条件
-        private ListView<Action> _subActions = new ListView<Action>();  //所有子Action
+        private ListView<Cutscene> _subActions = new ListView<Cutscene>();  //所有子Action
 
         public Dictionary<int, float> gameObjectsScale = new Dictionary<int, float>();  //对象index索引，对象的缩放
 
         // 针对异步加载的Object的处理
         private Dictionary<int, bool> gameObjectsAynsLoad = new Dictionary<int, bool>();  //对象index索引，对象是否是正式而临时
         
-        // 异步end
-
-        private float playSpeedOnPause = 0.0f;  //暂停时保存当前速度值
         private int _instanceID = 0;   //唯一标识，注意池化的话需要重置这个值
 
         public bool bWaitWhenPlayEnd = false;//停留在最后一帧等待,如果在最后一帧等待就不允许stop Q:如果一直为true则无法stop
@@ -91,14 +86,10 @@ namespace AGE
         }
 
         [Obsolete]
-        public string name = "";  //功能跟actionName一致  可以考虑废弃
         public int refGameObjectsCount = -1;  //传入对象个数  可以考虑废弃直接使用数组长度
         [ReadOnly]
         public int callbackID = 0;
         public GameObject sceneRoot { get; set; }
-#if UNITY_EDITOR
-        public CutsceneState state = CutsceneState.Playing;
-#endif
         #endregion
 
         public Action()
@@ -109,9 +100,7 @@ namespace AGE
         public void Reset()
         {
             length = 5.0f;
-            loop = false;
 
-            actionName = "";
             enabled = true;
             deltaTime = 0.0f;
             time = 0.0f;
@@ -137,7 +126,6 @@ namespace AGE
                 _subActions.Clear();
             }
 
-            playSpeedOnPause = 0.0f;
             _instanceID = 0;
 
             bWaitWhenPlayEnd = false;
@@ -190,21 +178,11 @@ namespace AGE
             return action;
         }
 
-        public void Play()
-        {
-            if (enabled)
-                return;
-            enabled = true;
-            playSpeed = playSpeedOnPause;
-            SetPlaySpeed(playSpeedOnPause);
-        }
-
         public virtual void Pause()
         {
             if (!enabled)
                 return;
             enabled = false;
-            playSpeedOnPause = playSpeed;
             SetPlaySpeed(0.0f);
         }
 
@@ -275,16 +253,11 @@ namespace AGE
             Type trackType = typeof(Track);
             if (tracks != null)
             {
-#if UNITY_EDITOR
-                if (Application.isPlaying && state == CutsceneState.Playing)
-#endif
+                for (int i = 0; i < tracks.Count; i++)
                 {
-                    for (int i = 0; i < tracks.Count; i++)
-                    {
-                        ActionClassPoolManager.Instance.GetActionClassPool(trackType).ReleaseActionObject(tracks[i]);
-                    }
-                    tracks.Clear();    
+                    ActionClassPoolManager.Instance.GetActionClassPool(trackType).ReleaseActionObject(tracks[i]);
                 }
+                tracks.Clear();
             }
             conditions.Clear();
 
@@ -444,7 +417,6 @@ namespace AGE
 
         public Track AddTrack(Track _track)
         {
-            _track.action = this;
             _track.trackIndex = tracks.Count;
             tracks.Add(_track);
             conditions.Add(_track, false);

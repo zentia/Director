@@ -10,6 +10,9 @@ namespace CinemaDirector
 {
     public partial class Cutscene : Action
     {
+        [SerializeField]
+        private bool isLooping = true;
+        private CutsceneState state = CutsceneState.Inactive;
         [TableList]
         public List<TemplateObject> m_templateObjectList = new List<TemplateObject>();
         
@@ -69,30 +72,30 @@ namespace CinemaDirector
         {
             if (state == CutsceneState.Inactive)
             {
-                DirectorEvent.ExecuteCoroutines.Invoke(FreshPlay);
+                DirectorEvent.StartCoroutine.Invoke(FreshPlay);
             }
             else if (state == CutsceneState.Paused)
             {
                 state = CutsceneState.PreviewPlaying;
-                DirectorEvent.ExecuteCoroutines.Invoke(UpdateCoroutine);
+                DirectorEvent.StartCoroutine.Invoke(UpdateCoroutine);
             }
         }
 
         private IEnumerator FreshPlay()
         {
-            DirectorEvent.ExecuteCoroutines.Invoke(PreparePlay);
+            DirectorEvent.StartCoroutine.Invoke(PreparePlay);
             // Wait one frame.
             yield return null;
 
             state = CutsceneState.PreviewPlaying;
-            DirectorEvent.ExecuteCoroutines.Invoke(UpdateCoroutine);
+            DirectorEvent.StartCoroutine.Invoke(UpdateCoroutine);
         }
 
         public override void Pause()
         {
             if (state == CutsceneState.PreviewPlaying)
             {
-                DirectorEvent.StopCoroutines.Invoke(UpdateCoroutine);
+                DirectorEvent.StopCoroutine.Invoke(UpdateCoroutine);
             }
             if (state == CutsceneState.PreviewPlaying || state == CutsceneState.Scrubbing)
             {
@@ -119,12 +122,13 @@ namespace CinemaDirector
                 trackGroup.Stop();
             }
 
-            revert();
+            if (state != CutsceneState.Inactive)
+                revert();
 
-            if (state == CutsceneState.PreviewPlaying)
+            if (state == CutsceneState.Playing)
             {
-                DirectorEvent.StopCoroutines.Invoke(UpdateCoroutine);
-                if (state == CutsceneState.PreviewPlaying && loop)
+                DirectorEvent.StopCoroutine.Invoke(UpdateCoroutine);
+                if (state == CutsceneState.PreviewPlaying && isLooping)
                 {
                     state = CutsceneState.Inactive;
                     Play();
@@ -145,7 +149,6 @@ namespace CinemaDirector
                 {
                     CutsceneFinished(this, new CutsceneEventArgs());
                 }
-                base.Stop();
             }
         }
 
@@ -305,6 +308,12 @@ namespace CinemaDirector
             }
         }
 
+        public bool IsLooping
+        {
+            get { return isLooping; }
+            set { isLooping = value; }
+        }
+
         /// <summary>
         /// An important call to make before sampling the cutscene, to initialize all track groups 
         /// and save states of all actors/game objects.
@@ -312,7 +321,7 @@ namespace CinemaDirector
         private void Initialize()
         {
             saveRevertData();
-            ForceStart();
+            
             foreach (TrackGroup directorObject in Children)
             {
                 directorObject.Initialize();

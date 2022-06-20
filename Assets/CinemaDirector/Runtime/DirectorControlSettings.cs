@@ -1,21 +1,43 @@
-using UnityEditor;
 using System;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
 namespace CinemaDirector
 {
-	internal class DirectorControlSettings : SerializedScriptableObject
-	{
+	public class DirectorControlSettings : SerializedScriptableObject
+    {
+        private static DirectorControlSettings instance;
+
+        public static DirectorControlSettings Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = Resources.Load<DirectorControlSettings>(Name);
+                    if (instance == null)
+                    {
+                        instance = CreateInstance<DirectorControlSettings>();
+#if UNITY_EDITOR
+						UnityEditor.AssetDatabase.CreateAsset(instance, path);
+#endif
+					}
+				}
+				return instance;
+            }
+        }
 		[Serializable]
 		public struct Config
 		{
-			public string metaPath;
 			public string AssetsPath
             {
                 get
                 {
-					string path = assetsPath.Replace(System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar);
+                    if (string.IsNullOrEmpty(assetsPath))
+                    {
+                        return "";
+                    }
+					var path = assetsPath.Replace(System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar);
 					if (!path.EndsWith(new string(System.IO.Path.DirectorySeparatorChar, 1)))
                     {
 						return path + System.IO.Path.DirectorySeparatorChar;
@@ -48,7 +70,7 @@ namespace CinemaDirector
 		}
 		private void OnChangedMode()
         {
-			EditorPrefs.SetInt(MODE, (int)m_mode);
+			PlayerPrefs.SetInt(MODE, (int)m_mode);
         }
 		public string assetsPath
         {
@@ -57,13 +79,7 @@ namespace CinemaDirector
 				return mode == Mode.inside ? inside.AssetsPath : outside.AssetsPath;
             }			
         }
-		public string metaPath
-        {
-            get
-            {
-				return mode == Mode.inside ? inside.metaPath : outside.metaPath;
-            }
-        }
+		
 		private float m_HRangeMax = float.PositiveInfinity;
 
 		private float m_HRangeMin = float.NegativeInfinity;
@@ -71,7 +87,7 @@ namespace CinemaDirector
 		private bool m_HSlider = true;
 
 		private bool m_ScaleWithWindow = true;
-		public const string path = @"Assets\OSGame\Cinema Director\Editor\Resources\DirectorControlSettings.asset";
+		public const string path = @"Assets\OSGame\Cinema Director\Resources\DirectorControlSettings.asset";
 		public const string Name = "DirectorControlSettings";
 		public const string actionPresent = "ActionPresent/";
 		private const string COORDINATETYPE = "DirectorControlSettings.CoordinateType";
@@ -81,21 +97,24 @@ namespace CinemaDirector
 		private CoordinateType m_CoordinateType;
 		private void OnChangedCorrdinate()
         {
-			EditorPrefs.SetInt(COORDINATETYPE, (int)m_CoordinateType);
+			PlayerPrefs.SetInt(COORDINATETYPE, (int)m_CoordinateType);
         }
-		
+
+#if UNITY_EDITOR
 		[Button("SaveAndOpenExplore")]
-		public void Save()
+        public void Save()
         {
-			var path = AssetDatabase.GetAssetPath(this);
-			AssetDatabase.SaveSingleAsset(path);
-			EditorUtility.RevealInFinder(path);
+            var path = UnityEditor.AssetDatabase.GetAssetPath(this);
+            UnityEditor.AssetDatabase.SaveSingleAsset(path);
+            UnityEditor.EditorUtility.RevealInFinder(path);
         }
+#endif
+
 
 		public void OnEnable()
         {
-			m_mode = (Mode)EditorPrefs.GetInt(MODE, (int)Mode.outside);
-			m_CoordinateType = (CoordinateType)EditorPrefs.GetInt(COORDINATETYPE, (int)CoordinateType.World);
+			m_mode = (Mode)PlayerPrefs.GetInt(MODE, (int)Mode.outside);
+			m_CoordinateType = (CoordinateType)PlayerPrefs.GetInt(COORDINATETYPE, (int)CoordinateType.World);
         }
 		public CoordinateType coordinateType
         {
@@ -108,13 +127,13 @@ namespace CinemaDirector
 				if (value == m_CoordinateType)
 					return;
 				m_CoordinateType = value;
-				EditorPrefs.SetInt(COORDINATETYPE, (int)value);
+				PlayerPrefs.SetInt(COORDINATETYPE, (int)value);
             }
         }
 
-        internal bool HRangeLocked { get; set; }
+        public bool HRangeLocked { get; set; }
 
-        internal float HRangeMax
+        public float HRangeMax
 		{
 			get
 			{
@@ -126,7 +145,7 @@ namespace CinemaDirector
 			}
 		}
 
-		internal float HorizontalRangeMin
+		public float HorizontalRangeMin
 		{
 			get
 			{
@@ -138,7 +157,7 @@ namespace CinemaDirector
 			}
 		}
 
-		internal bool HSlider
+		public bool HSlider
 		{
 			get
 			{
@@ -150,7 +169,7 @@ namespace CinemaDirector
 			}
 		}
 
-		internal bool ScaleWithWindow
+		public bool ScaleWithWindow
 		{
 			get
 			{

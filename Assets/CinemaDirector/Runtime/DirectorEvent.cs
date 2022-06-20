@@ -7,9 +7,9 @@ namespace CinemaDirector
     {
 
     }
-    public delegate IEnumerator CoroutinesEvent();
+    public delegate IEnumerator CoroutineEvent();
 
-    public class DirectorCoroutineEvent : UnityEvent<CoroutinesEvent>
+    public class DirectorCoroutineEvent : UnityEvent<CoroutineEvent>
     {
 
     }
@@ -17,7 +17,7 @@ namespace CinemaDirector
     public class DirectorEvent
     {
         public static DirectorObjectEvent DestroyObject = new DirectorObjectEvent();
-        public static DirectorCoroutineEvent ExecuteCoroutines = new DirectorCoroutineEvent();
-        public static DirectorCoroutineEvent StopCoroutines = new DirectorCoroutineEvent(); 
+        public static DirectorCoroutineEvent StartCoroutine = new DirectorCoroutineEvent();
+        public static DirectorCoroutineEvent StopCoroutine = new DirectorCoroutineEvent(); 
     }
 }

@@ -27,7 +27,7 @@ namespace CinemaDirector
                 {
                     return;
                 }
-                actionName = relPath.GetRelativePath(assetsPath);
+                name = relPath.GetRelativePath(assetsPath);
             }
             
             var xmlDoc = new XmlDocument();
@@ -41,7 +41,7 @@ namespace CinemaDirector
         public void Load(string xmlPath, bool relative, string assetsPath)
         {
             state = CutsceneState.Inactive;
-            actionName = xmlPath;
+            name = xmlPath;
             if (string.IsNullOrEmpty(xmlPath))
             {
                 return;
@@ -83,7 +83,7 @@ namespace CinemaDirector
             var action = xmlElement.SelectSingleNode("Action");
             enabled = false;
             length = float.Parse(action.Attributes["length"].Value);
-            loop = bool.Parse(action.Attributes["loop"].Value);
+            isLooping = bool.Parse(action.Attributes["loop"].Value);
             foreach (XmlElement templateObject in templateObjectList)
             {
                 var objectName = templateObject.GetAttribute("objectName");
@@ -110,7 +110,12 @@ namespace CinemaDirector
                 }
                 var trackGroup = GetOrAddTrackGroup(trackGroupName);
                 var eventType = "AGE." + trackElement.GetAttribute("eventType");
-                var type = CSharpUtilities.GetType(eventType);
+                var type = Type.GetType(eventType);
+                if (type == null)
+                {
+                    Debug.LogErrorFormat("{0} not found!", eventType);
+                    continue;
+                }
                 var lengthField = type.GetField("length");
                 var track = Create(lengthField != null ? typeof(GenericTrack) : typeof(CurveTrack), trackGroup, trackName) as TimelineTrack;
                 if (track == null)
@@ -153,7 +158,7 @@ namespace CinemaDirector
             }
             xmlElement.AppendChild(trackGroupList);
             action.SetAttribute("length", Duration.ToString());
-            action.SetAttribute("loop", loop.ToString());
+            action.SetAttribute("loop", isLooping.ToString());
             xmlElement.AppendChild(action);
         }
         

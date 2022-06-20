@@ -11,34 +11,14 @@ namespace CinemaDirector
 			public GUIStyle TimelineTick = "AnimationTimelineTick";
 		}
 
-        private DirectorControlSettings m_Settings;
 		private static TimeAreaStyle styles;
         internal TickHandler HTicks { get; set; }
 
-        internal DirectorControlSettings Settings
-		{
-			get
-			{
-				return m_Settings;
-			}
-			set
-			{
-				if (value != null)
-				{
-					m_Settings = value;
-					ApplySettings();
-				}
-			}
-		}
+        internal DirectorControlSettings Settings => DirectorControlSettings.Instance;
 
 		public TimeArea()
 		{
-			m_Settings = Resources.Load<DirectorControlSettings>(DirectorControlSettings.Name);
-            if (m_Settings == null)
-            {
-                m_Settings = ScriptableObject.CreateInstance<DirectorControlSettings>();
-                AssetDatabase.CreateAsset(m_Settings, DirectorControlSettings.path);
-            }
+			
             float[] tickModulos = new float[]
 			{
 				0.0005f,

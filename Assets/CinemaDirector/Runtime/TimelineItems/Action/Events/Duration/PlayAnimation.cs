@@ -149,6 +149,12 @@ namespace AGE
             clipState = null;
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+            Enter(Cutscene, Parent as Track);
+        }
+
         public override void Enter(Action _action, Track _track)
 		{
             _checkAsynObj = false;
@@ -158,30 +164,25 @@ namespace AGE
                 return;
             }
 
-#if UNITY_EDITOR
-            if (_action.state == CutsceneState.Playing)
-#endif
-            {
-                targetAnim.Stop();
-                targetAnim.Play(finalClipName);
+            targetAnim.Stop();
+            targetAnim.Play(finalClipName);
 
-				if (startTime < 0)
-					startTime = 0;
-				if (startTime > clipState.length)
-					startTime = clipState.length;
-				if (endTime > clipState.length)
-					endTime = clipState.length;
-				if (endTime < startTime)
-					endTime = startTime;
+            if (startTime < 0)
+                startTime = 0;
+            if (startTime > clipState.length)
+                startTime = clipState.length;
+            if (endTime > clipState.length)
+                endTime = clipState.length;
+            if (endTime < startTime)
+                endTime = startTime;
 
-				float playLength = endTime - startTime;
+            float playLength = endTime - startTime;
 
-                float localTime = _track.curTime - Start;
-                clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
-                clipState.time = startTime + localTime * clipState.speed;
-                clipState.enabled = true;
-			}
-		}
+            float localTime = _track.curTime - Start;
+            clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
+            clipState.time = startTime + localTime * clipState.speed;
+            clipState.enabled = true;
+        }
 
 		public override void EnterBlend (Action _action, Track _track, BaseEvent _prevEvent, float _blendTime)
 		{
@@ -190,30 +191,25 @@ namespace AGE
                 return;
             }
 
-#if UNITY_EDITOR
-            if (_action.state == CutsceneState.Playing)
-#endif
-            {
-                targetAnim.CrossFade(finalClipName, _blendTime);
+            targetAnim.CrossFade(finalClipName, _blendTime);
 
-				if (startTime < 0)
-					startTime = 0;
-				if (startTime > clipState.length)
-					startTime = clipState.length;
-				if (endTime > clipState.length)
-					endTime = clipState.length;
-				if (endTime < startTime)
-					endTime = startTime;
+            if (startTime < 0)
+                startTime = 0;
+            if (startTime > clipState.length)
+                startTime = clipState.length;
+            if (endTime > clipState.length)
+                endTime = clipState.length;
+            if (endTime < startTime)
+                endTime = startTime;
 
-				float playLength = endTime - startTime;
+            float playLength = endTime - startTime;
 
-                float localTime = _track.curTime - Start;
-				clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
-                clipState.time = startTime + localTime * clipState.speed;
-                
-                clipState.enabled = true;
-			}
-		}
+            float localTime = _track.curTime - Start;
+            clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
+            clipState.time = startTime + localTime * clipState.speed;
+
+            clipState.enabled = true;
+        }
 
 		public override void Process (Action _action, Track _track, float _localTime)
         {
@@ -226,29 +222,25 @@ namespace AGE
                     // 找到了，完事，播放
                     _checkAsynObj = false;
 
-#if UNITY_EDITOR
-                    if (_action.state == CutsceneState.Playing)
-#endif
-                    {
-                        targetAnim.Stop();
-                        targetAnim.Play(finalClipName);
+                    targetAnim.Stop();
+                    targetAnim.Play(finalClipName);
 
-                        if (startTime < 0)
-                            startTime = 0;
-                        if (startTime > clipState.length)
-                            startTime = clipState.length;
-                        if (endTime > clipState.length)
-                            endTime = clipState.length;
-                        if (endTime < startTime)
-                            endTime = startTime;
 
-                        float playLength = endTime - startTime;
+                    if (startTime < 0)
+                        startTime = 0;
+                    if (startTime > clipState.length)
+                        startTime = clipState.length;
+                    if (endTime > clipState.length)
+                        endTime = clipState.length;
+                    if (endTime < startTime)
+                        endTime = startTime;
 
-                        float localTime = _track.curTime - Start;
-                        clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
-                        clipState.time = startTime + localTime * clipState.speed;
-                        clipState.enabled = true;
-                    }
+                    float playLength = endTime - startTime;
+
+                    float localTime = _track.curTime - Start;
+                    clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
+                    clipState.time = startTime + localTime * clipState.speed;
+                    clipState.enabled = true;
                 }
                 else
                 {
@@ -261,29 +253,19 @@ namespace AGE
                 return;
             }
 
-#if UNITY_EDITOR
-            if (_action.state != CutsceneState.Playing)
-            {
-                if (startTime < 0)
-                    startTime = 0;
-                if (startTime > clipState.length)
-                    startTime = clipState.length;
-                if (endTime > clipState.length)
-                    endTime = clipState.length;
-                if (endTime < startTime)
-                    endTime = startTime;
-				clipState.enabled = true;
-                float playLength = endTime - startTime;
-                clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
-                clipState.time = startTime + _localTime * clipState.speed;
-                clipState.clip.SampleAnimation(targetObject, startTime + _localTime * playLength / length / (applyActionSpeed ? 1.0f : _action.PlaySpeed));
-            }
-            else
-#endif
-            {
-                float playLength = endTime - startTime;
-                clipState.speed = playLength / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
-            }
+            if (startTime < 0)
+                startTime = 0;
+            if (startTime > clipState.length)
+                startTime = clipState.length;
+            if (endTime > clipState.length)
+                endTime = clipState.length;
+            if (endTime < startTime)
+                endTime = startTime;
+            clipState.enabled = true;
+            float tempTime = endTime - startTime;
+            clipState.speed = tempTime / length * (applyActionSpeed ? _action.PlaySpeed : 1.0f);
+            clipState.time = startTime + _localTime * clipState.speed;
+            clipState.clip.SampleAnimation(targetObject, startTime + _localTime * tempTime / length / (applyActionSpeed ? 1.0f : _action.PlaySpeed));
         }
 
 		public override void Leave (Action _action, Track _track)
@@ -293,16 +275,11 @@ namespace AGE
                 return;
             }
 
-#if UNITY_EDITOR
-            if (_action.state == CutsceneState.Playing)
-#endif
+            if (autoDisableAnimation)
             {
-				if(autoDisableAnimation)
-				{
-					clipState.enabled = false;
-				}
-			}
-		}
+                clipState.enabled = false;
+            }
+        }
 		
 		protected override void CopyData(BaseEvent src)
         {

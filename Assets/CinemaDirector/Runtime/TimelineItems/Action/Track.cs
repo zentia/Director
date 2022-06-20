@@ -22,7 +22,6 @@ namespace AGE
 
         public void InitTrackExtraParam(Action _action, string _eventTypeName)
         {
-            action = _action;
             eventTypeName = _eventTypeName;
             eventType = Type.GetType(_eventTypeName);
             curTime = 0;
@@ -69,7 +68,6 @@ namespace AGE
 
             }
             trackEvents.Clear();
-            action = null;
             started = false;
             enabled = false;
 
@@ -805,21 +803,16 @@ namespace AGE
            
 
             OnActionStop(_action);
-            
-#if UNITY_EDITOR
-            if (Application.isPlaying && _action.state == CutsceneState.Playing)
-#endif
+
+            for (int i = 0; i < trackEvents.Count; ++i)
             {
-                for (int i = 0; i < trackEvents.Count; ++i)
+                BaseEvent trackEvent = trackEvents[i] as BaseEvent;
+                if (trackEvent != null)
                 {
-                    BaseEvent trackEvent = trackEvents[i] as BaseEvent;
-                    if (trackEvent != null)
-                    {
-                        ActionClassPoolManager.Instance.GetActionClassPool(trackEvent.GetType()).ReleaseActionObject(trackEvent);
-                    }
+                    ActionClassPoolManager.Instance.GetActionClassPool(trackEvent.GetType()).ReleaseActionObject(trackEvent);
                 }
-                trackEvents.Clear();    
             }
+            trackEvents.Clear();
         }
 
         public float Length
@@ -858,8 +851,7 @@ namespace AGE
         bool isCondition = false;
         [ReadOnly]
         public List<TimelineItem> trackEvents = new List<TimelineItem>();
-        [NonSerialized]
-        public Action action = null;
+        public Action action => (this as TimelineTrack).Cutscene;
         [ReadOnly]
         public bool started = false;
         [LabelText("启用")]

@@ -41,10 +41,10 @@ namespace CinemaDirector
                 if (cutscene != null)
                     selection.activeObject = cutscene;
             }
-            var actionName = cutscene != null ? cutscene.actionName : "";
-            if (GUILayout.Button(actionName, EditorStyles.toolbarButton))
+            var timelineName = cutscene != null ? cutscene.name : "";
+            if (GUILayout.Button(timelineName, EditorStyles.toolbarButton))
             {
-                Application.OpenURL("file:///" + Path.GetDirectoryName(Path.GetFullPath(directorControl.Settings.assetsPath + actionName)));
+                Application.OpenURL("file:///" + Path.GetDirectoryName(Path.GetFullPath(directorControl.Settings.assetsPath + timelineName)));
             }
             if (cutscene && cutscene.Dirty)
             {
@@ -61,10 +61,6 @@ namespace CinemaDirector
             GUILayout.Label("T/F", EditorStyles.toolbarButton);
             GUILayout.Label(string.Format("{0:N2}/{1:N0}", m_touchTime, m_touchTime*30), EditorStyles.toolbarButton);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Meta", EditorStyles.toolbarDropDown))
-            {
-                ShowMetaMenu();
-            }
             GUI.enabled = Application.isPlaying;
             if (GUILayout.Button("选择", EditorStyles.toolbarButton))
             {
@@ -137,24 +133,11 @@ namespace CinemaDirector
             }.ShowInPopup();
         }
 
-        private void ShowMetaMenu()
-        {
-            var menu = new GenericMenu();
-            menu.AddItem(new GUIContent("Show In Explore"), false, () =>
-            {
-                Application.OpenURL("file:///" + Path.GetDirectoryName(Path.GetFullPath(directorControl.Settings.metaPath)));
-            });
-            menu.ShowAsContext();
-        }
-
-        private IEnumerable<BetterSelectorItem<string>> GetAllAction()
+        private static IEnumerable<BetterSelectorItem<string>> GetAllAction()
         {
             var list = new List<BetterSelectorItem<string>>();
             var runningActions = AGE.ActionService.instance.HistoryRunningActions;
-            foreach (var runningAction in runningActions)
-            {
-                list.Add(runningAction);
-            }
+            runningActions.ForEach(o=>list.Add(o.name));
             return list;
         }
 
@@ -163,7 +146,7 @@ namespace CinemaDirector
             new BetterSelector<string>()
             {
                 candiates = GetAllAction(),
-                onSelect = CreateAgePlaying
+                onSelect = OnSelectTimeline
             }.ShowInPopup();
         }
     }

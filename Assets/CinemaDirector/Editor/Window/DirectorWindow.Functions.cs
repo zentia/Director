@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using EditorExtension;
 using UnityEditor;
 using UnityEngine;
@@ -19,7 +18,6 @@ namespace CinemaDirector
 
         private void SaveAs()
         {
-            cutscene.actionName = String.Empty;
             Save();
         }
 

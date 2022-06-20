@@ -165,7 +165,7 @@ namespace AGE
             int formerID = prevID - 1;
             if (formerID < 0)
             {
-                if (_action.loop)
+                if (Cutscene.IsLooping)
                 {
                     formerID = evtCount - 1;
                     if (formerID < 0)
@@ -177,7 +177,7 @@ namespace AGE
             int latterId = curID + 1;
             if (latterId >= evtCount)
             {
-                if (_action.loop)
+                if (Cutscene.IsLooping)
                     latterId = 0;
                 else
                     latterId = curID;
@@ -221,7 +221,7 @@ namespace AGE
             int formerID = prevID - 1;
             if (formerID < 0)
             {
-                if (_action.loop)
+                if (Cutscene.IsLooping)
                 {
                     formerID = evtCount - 1;
                     if (formerID < 0)
@@ -233,7 +233,7 @@ namespace AGE
             int latterId = curID + 1;
             if (latterId >= evtCount)
             {
-                if (_action.loop)
+                if (Cutscene.IsLooping)
                     latterId = 0;
                 else
                     latterId = curID;
