@@ -25,7 +25,7 @@ namespace CinemaDirector
 
             if (GUI.Button(position, string.Empty, TrackGroupControl.styles.addIcon))
             {
-                
+                addNewCurveItem(track);
             }
             GUI.color = temp;
         }
@@ -45,7 +45,7 @@ namespace CinemaDirector
 
             if (GUI.Button(position, string.Empty, TrackGroupControl.styles.addIcon))
             {
-                addNewCurveItem(track);
+                
             }
             GUI.color = temp;
         }

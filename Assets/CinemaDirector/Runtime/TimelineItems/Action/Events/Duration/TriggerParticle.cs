@@ -10,7 +10,7 @@ namespace AGE
         public int targetId = 0;
         [Template]
         public int objectSpaceId = -1;
-        [AssetReference]
+        [Asset]
         public string resourceName = "";
         [SubObject]
         public string bindPointName = "";

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using EditorExtension;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,14 +35,17 @@ namespace CinemaDirector
                 }
                 else if (trackTypes.Count > 1)
                 {
-                    GenericMenu createMenu = new GenericMenu();
+                    var candiates = new List<BetterSelectorItem<ContextData>>(trackTypes.Count);
                     for (int i = 0; i < trackTypes.Count; i++)
                     {
                         ContextData data = getContextData(trackTypes[i]);
-
-                        createMenu.AddItem(new GUIContent($"{data.Category}/{data.Label}"), false, addCutsceneItem, data);
+                        candiates.Add(new BetterSelectorItem<ContextData>($"{data.Category}/{data.Label}", data));
                     }
-                    createMenu.ShowAsContext();
+                    new BetterSelector<ContextData>
+                    {
+                        candiates = candiates,
+                        onSelect = addCutsceneItem
+                    }.ShowInPopup();
                 }
             }
 

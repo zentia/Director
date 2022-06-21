@@ -294,18 +294,18 @@ namespace CinemaDirector
         public override void Export(XmlElement xmlElement)
         {
             base.Export(xmlElement);
-            var track = xmlElement.OwnerDocument.CreateElement("Track");
-            track.SetAttribute("trackName", name);
-            track.SetAttribute("group", Parent.name);
-            track.SetAttribute("eventType", ItemType.Name);
-            track.SetAttribute("enabled", enabled.ToString());
-            track.SetAttribute("execOnForceStopped", execOnForceStopped.ToString());
-            track.SetAttribute("execOnActionCompleted", execOnActionCompleted.ToString());
-            track.SetAttribute("stopAfterLastEvent", stopAfterLastEvent.ToString());
-            xmlElement.Insert(track, Template.priority - 1);
+            var element = xmlElement.OwnerDocument.CreateElement("Track");
+            element.SetAttribute("trackName", name);
+            element.SetAttribute("group", Parent.name);
+            element.SetAttribute("eventType", ItemType.Name);
+            element.SetAttribute("enabled", enabled.ToString());
+            element.SetAttribute("execOnForceStopped", execOnForceStopped.ToString());
+            element.SetAttribute("execOnActionCompleted", execOnActionCompleted.ToString());
+            element.SetAttribute("stopAfterLastEvent", stopAfterLastEvent.ToString());
+            xmlElement.AppendChild(element);
             foreach (TimelineItem item in Children)
             {
-                item.Export(track);
+                item.Export(element);
             }
         }
 

@@ -178,16 +178,15 @@ namespace AGE
                 int conditionId = conIter.Current.Key;
 				if (conditionId >= 0 && conditionId < _action.GetConditionCount())
 				{
-					if (_action.GetCondition(_action.tracks[conditionId] as Track) != waitForConditions[conditionId])
+					if (_action.GetCondition(_action.tracks[conditionId]) != waitForConditions[conditionId])
 						return false;
 				}
 			}
 			return true;
 		}
 
-		public Dictionary<int, bool> waitForConditions = new Dictionary<int, bool>();
-        [NonSerialized]
-		public Track track = null;
+		protected Dictionary<int, bool> waitForConditions = new Dictionary<int, bool>();
+		public Track track { get; set; }
 
         public int CompareTo(object other)
         {
@@ -204,11 +203,6 @@ namespace AGE
             {
                 return 0;
             }
-        }
-
-        public override string ToString()
-        {
-            return time.ToString();
         }
     }
 }

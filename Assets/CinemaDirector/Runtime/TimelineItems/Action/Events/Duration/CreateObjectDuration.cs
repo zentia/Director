@@ -3,15 +3,9 @@ using UnityEngine;
 
 namespace AGE
 {
-
-    [EventCategory("Utility")]
+    [CutsceneItem("Utility", "CreateObjectDuration", CutsceneItemGenre.GenericItem)]
     public class CreateObjectDuration : DurationEvent
     {
-        public override bool SupportEditMode()
-        {
-            return true;
-        }
-
         [Template]
         public int targetId = -1;
 
@@ -30,7 +24,7 @@ namespace AGE
 
         public bool normalizedRelative = false;
 
-        [AssetReference]
+        [Asset]
         public string prefabName = "";
 
         public bool recreateExisting = true;
@@ -57,8 +51,10 @@ namespace AGE
         public bool enableActorInfoScaling = false;
         public int actorInfoTargetId = -1;
 
-        public override void Enter(Action _action, Track _track)
+        public override void Initialize()
         {
+            base.Initialize();
+            var _action = Cutscene;
             GameObject parentObj = _action.GetGameObject(parentId);
             Transform parentTrans = parentObj == null ? null : parentObj.transform;
             GameObject objectSpace = _action.GetGameObject(objectSpaceId);
@@ -94,7 +90,7 @@ namespace AGE
                     newRot = rotation;
             }
 
-            if(randomEffect != Vector3.zero)
+            if (randomEffect != Vector3.zero)
             {
                 Vector3 posRandom = new Vector3(Random.Range(-randomEffect.x, randomEffect.x), Random.Range(-randomEffect.y, randomEffect.y), Random.Range(-randomEffect.z, randomEffect.z));
                 newPos += posRandom;
@@ -149,19 +145,17 @@ namespace AGE
                     }
                     else
                     {
-                        
+
                         newObject = ActionService.GetInstance().InstantiateParticleSystem(prefabName, _action, newPos, modifyRotation ? (Quaternion?)newRot : null, parentTrans,
-                        destroyAtActionStop, applyActionSpeedToParticle, enableLayer ? layer : -1, enableTag ? tag : "", enableNewScaling ? (Vector3?)newScaling : null) as GameObject;
+                        destroyAtActionStop, applyActionSpeedToParticle, enableLayer ? layer : -1, enableTag ? tag : "", enableNewScaling ? (Vector3?)newScaling : null);
                     }
                     _action.gameObjects[targetId] = newObject;
                 }
             }
             else
             {
-                //no auto recycling
-                //always create new object			
                 newObject = ActionService.GetInstance().InstantiateParticleSystem(prefabName, _action, newPos, modifyRotation ? (Quaternion?)newRot : null, parentTrans,
-                    destroyAtActionStop, applyActionSpeedToParticle, enableLayer ? layer : -1, enableTag ? tag : "", enableNewScaling ? (Vector3?)newScaling : null) as GameObject;
+                    destroyAtActionStop, applyActionSpeedToParticle, enableLayer ? layer : -1, enableTag ? tag : "", enableNewScaling ? (Vector3?)newScaling : null);
             }
 
             if (newObject == null)
@@ -175,35 +169,17 @@ namespace AGE
             }
         }
 
-
         public override void Leave(Action _action, Track _track)
         {
-            if (targetId >= 0 && _action.GetGameObject(targetId))
+            if (targetId >= 0 && Cutscene.GetGameObject(targetId))
             {
                 if (applyActionSpeedToAnimation)
-                    _action.RemoveTempObject(Action.PlaySpeedAffectedType.ePSAT_Anim, _action.gameObjects[targetId]);
+                    Cutscene.RemoveTempObject(Action.PlaySpeedAffectedType.ePSAT_Anim, Cutscene.gameObjects[targetId]);
                 if (applyActionSpeedToParticle)
-                    _action.RemoveTempObject(Action.PlaySpeedAffectedType.ePSAT_Fx, _action.gameObjects[targetId]);
-                ActionService.GetInstance().DestroyGameObject(_action.GetGameObject(targetId));
-                _action.gameObjects[targetId] = null; //特效已被回收，不再保持引用关系
+                    Cutscene.RemoveTempObject(Action.PlaySpeedAffectedType.ePSAT_Fx, Cutscene.gameObjects[targetId]);
+                ActionService.GetInstance().DestroyGameObject(Cutscene.GetGameObject(targetId));
+                Cutscene.gameObjects[targetId] = null; //特效已被回收，不再保持引用关系
             }
-        }
-
-        public override void Process(Action _action, Track _track, float _localTime)
-        {
-            // 如果还在异步加载，要延长持续时间。放这里是因为回调的时候可能已经leave了。导致看不到加载后的东西
-            //if (_asynLoad == true && Assets.Scripts.Logic.Battle.BattleUtility.IsAsynParticleSystem())
-            //{
-            //    float addtime = _action.time - _waitAsynTime;
-            //    length += addtime;
-            //    _waitAsynTime = _action.time;
-
-            //    // 有个防护
-            //    if (length > _action.length + 1)
-            //    {
-            //        length = _action.length + 1;
-            //    }
-            //}
         }
 
         void CalRelativeTransform(GameObject fromObj, GameObject toObj, ref Vector3 newPos, ref Quaternion newRot)

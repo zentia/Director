@@ -69,6 +69,10 @@ namespace AGE
 
         private void OnCutsceneFinished(Cutscene sender, CutsceneEventArgs e)
         {
+            if (!_runingAgeAssets.ContainsKey(sender))
+            {
+                return;
+            }
             AssetService.GetInstance().Unload(_runingAgeAssets[sender]);
             _runingAgeAssets.Remove(sender);
             _runningActions.Remove(sender);

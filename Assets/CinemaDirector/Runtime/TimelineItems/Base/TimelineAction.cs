@@ -88,7 +88,10 @@ namespace CinemaDirector
             durationEvent.Process(Cutscene, TimelineTrack, time);
         }
 
-        public void End()
+        /// <summary>
+        /// Called when the running time of the cutscene exceeds the duration of the action
+        /// </summary>
+        public virtual void End()
         {
             durationEvent.Leave(Cutscene, TimelineTrack);
         }

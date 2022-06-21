@@ -116,8 +116,7 @@ namespace CinemaDirector
                     Debug.LogErrorFormat("{0} not found!", eventType);
                     continue;
                 }
-                var lengthField = type.GetField("length");
-                var track = Create(lengthField != null ? typeof(GenericTrack) : typeof(CurveTrack), trackGroup, trackName) as TimelineTrack;
+                var track = Create(typeof(GenericTrack), trackGroup, trackName) as TimelineTrack;
                 if (track == null)
                 {
                     continue;

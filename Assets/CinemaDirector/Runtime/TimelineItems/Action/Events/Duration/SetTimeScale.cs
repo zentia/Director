@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using CinemaDirector;
+using UnityEngine;
 
 namespace AGE
 {
+    [CutsceneItem("Utility", "SetTimeScale", CutsceneItemGenre.GenericItem)]
     public class SetTimeScale : DurationEvent
     {
         public float timeScale = 1.0f;

@@ -6,16 +6,8 @@ using Assets.Plugins.Common;
 namespace CinemaDirector
 {
     [Serializable]
-    public class TimelineItem : DirectorObject, IComparable<TimelineItem>, ICloneable
+    public class TimelineItem : DirectorObject
     {
-        [NonSerialized]
-        public bool isDuration;
-        [NonSerialized]
-        public string description;
-        [NonSerialized]
-        public Type parentType;
-        [NonSerialized]
-        public int priority;
         private bool destroy;
         public Vector3 position
         {
@@ -24,16 +16,7 @@ namespace CinemaDirector
                 return new Vector3(Firetime, 0);
             }
         }
-
-        public int CompareTo(TimelineItem timelineItem)
-        {
-            if (timelineItem.Firetime == Firetime)
-                return 0;
-            if (timelineItem.Firetime > Firetime)
-                return -1;
-            return 1;
-        }
-
+        
         public float time;
         
         public bool ContainsTime(float time)
@@ -134,21 +117,6 @@ namespace CinemaDirector
             }
         }
 
-        public object Clone()
-        {
-            var item = Create(this, Parent, name) as TimelineItem;
-            var track = Parent as TimelineTrack;
-            if (track != null && track != null)
-            {
-                var len = 0f;
-                if (isDuration)
-                {
-                    len = (this as TimelineAction).Duration;
-                }
-            }
-            return item;
-        }
-        
         public override void Import(XmlElement xmlElement)
         {
             base.Import(xmlElement);
@@ -214,7 +182,15 @@ namespace CinemaDirector
                     case "Enum":
                     {
                         var value = node.GetAttribute("value");
-                        field.SetValue(this, Enum.ToObject(field.FieldType, int.Parse(value)));
+                        int val;
+                        if (int.TryParse(value, out val))
+                        {
+                            field.SetValue(this, Enum.ToObject(field.FieldType, int.Parse(value)));
+                        }
+                        else
+                        {
+                            field.SetValue(this, Enum.Parse(field.FieldType, value));
+                        }
                     }
                         break;
                 }
@@ -230,7 +206,6 @@ namespace CinemaDirector
             var evt = document.CreateElement("Event");
             evt.SetAttribute("eventName", GetType().ToString());
             evt.SetAttribute("time", $"{Firetime}");
-            evt.SetAttribute("isDuration", isDuration.ToString());
             xmlElement.AppendChild(evt);
             var fields = GetType().GetFields();
             foreach (var fieldInfo in fields)
@@ -244,29 +219,57 @@ namespace CinemaDirector
                 else if (fieldInfo.FieldType.IsEnum)
                 {
                     itemElement = document.CreateElement("Enum");
+                    itemElement.SetAttribute("value", fieldInfo.GetValue(this).ToString());
+                }
+                else if (fieldInfo.FieldType == typeof(int))
+                {
+                    var attributes = fieldInfo.GetCustomAttributes(typeof(TemplateAttribute), true);
+                    if (attributes.Length > 0)
+                    {
+                        itemElement = document.CreateElement("TemplateObject");
+                        itemElement.SetAttribute("id", fieldInfo.GetValue(this).ToString());
+                        itemElement.SetAttribute("isTemp", "false");
+                    }
+                    else
+                    {
+                        itemElement = document.CreateElement("int");
+                        itemElement.SetAttribute("value", fieldInfo.GetValue(this).ToString());
+                    }
+                }
+                else if (fieldInfo.FieldType == typeof(string))
+                {
+                    itemElement = document.CreateElement("string");
+                    itemElement.SetAttribute("value", (string)fieldInfo.GetValue(this));
+                }
+                else if (fieldInfo.FieldType == typeof(float))
+                {
+                    itemElement = document.CreateElement("float");
+                    itemElement.SetAttribute("value", fieldInfo.GetValue(this).ToString());
+                }
+                else if (fieldInfo.FieldType == typeof(bool))
+                {
+                    itemElement = document.CreateElement("bool");
+                    itemElement.SetAttribute("value", (bool)fieldInfo.GetValue(this) ? "true" : "false");
+                }
+                else if (fieldInfo.FieldType == typeof(Vector3))
+                {
+                    itemElement = document.CreateElement("Vector3");
+                    var value = (Vector3)fieldInfo.GetValue(this);
+                    itemElement.SetAttribute("x", $"{value.x}");
+                    itemElement.SetAttribute("y", $"{value.y}");
+                    itemElement.SetAttribute("z", $"{value.z}");
+                }
+                else if (fieldInfo.FieldType == typeof(Quaternion))
+                {
+                    itemElement = document.CreateElement("EulerAngle");
+                    var value = (Quaternion)fieldInfo.GetValue(this);
+                    itemElement.SetAttribute("x", $"{value.eulerAngles.x}");
+                    itemElement.SetAttribute("y", $"{value.eulerAngles.y}");
+                    itemElement.SetAttribute("z", $"{value.eulerAngles.z}");
                 }
                 else
                 {
-                    itemElement = document.CreateElement(fieldInfo.FieldType.Name);
-                }
-                
-                switch (fieldInfo.FieldType.Name)
-                {
-                    case "int":
-                    {
-                        var attributes = fieldInfo.GetCustomAttributes(typeof(TemplateAttribute), true);
-                        if (attributes.Length > 0)
-                        {
-                            itemElement = document.CreateElement("TemplateObject");
-                            itemElement.SetAttribute("id", fieldInfo.GetValue(this).ToString());
-                            itemElement.SetAttribute("isTemp", "false");
-                        }
-                        else
-                        {
-                            
-                        }
-                    }
-                        break;
+                    continue;
                 }
                 itemElement.SetAttribute("name", fieldInfo.Name);
                 evt.AppendChild(itemElement);

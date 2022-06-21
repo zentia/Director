@@ -4,7 +4,7 @@ using UnityEngine;
 namespace AGE
 {
 
-    [EventCategory("Utility")]
+    [CutsceneItem("CreateObject", "CreateObjectTick", CutsceneItemGenre.GenericItem)]
     public class CreateObjectTick : TickEvent
     {
         public override bool SupportEditMode()
@@ -308,56 +308,6 @@ namespace AGE
         // 行动结束，异步加载的结束标记还没加载处理的销毁
         public override void OnActionStop(Action _action)
         {
-        }
-
-        private void ResetTrans(Action action, GameObject obj)
-        {
-            GameObject parentObj = action.GetGameObject(parentId);
-            Transform parentTrans = parentObj == null ? null : parentObj.transform;
-            GameObject objectSpace = action.GetGameObject(objectSpaceId);
-            Transform objectSpaceTrans = objectSpace == null ? null : objectSpace.transform;
-            GameObject fromObj = action.GetGameObject(fromId);
-            GameObject toObj = action.GetGameObject(toId);
-            Vector3 newPos = new Vector3();
-            Quaternion newRot = new Quaternion();
-
-            if (fromObj != null && toObj != null)
-            {
-                CalRelativeTransform(fromObj, toObj, ref newPos, ref newRot);
-            }
-            else if (parentTrans)
-            {
-                if (modifyTranslation)
-                    newPos = parentTrans.localToWorldMatrix.MultiplyPoint(translation);
-                if (modifyRotation)
-                    newRot = parentTrans.rotation * rotation;
-            }
-            else if (objectSpaceTrans)
-            {
-                if (modifyTranslation)
-                    newPos = objectSpaceTrans.localToWorldMatrix.MultiplyPoint(translation);
-                if (modifyRotation)
-                    newRot = objectSpaceTrans.rotation * rotation;
-            }
-            else
-            {
-                if (modifyTranslation)
-                    newPos = translation;
-                if (modifyRotation)
-                    newRot = rotation;
-            }
-
-            if (randomEffect != Vector3.zero)
-            {
-                Vector3 posRandom = new Vector3(Random.Range(-randomEffect.x, randomEffect.x), Random.Range(-randomEffect.y, randomEffect.y), Random.Range(-randomEffect.z, randomEffect.z));
-                newPos += posRandom;
-            }
-
-            if (modifyTranslation)
-                obj.transform.position = newPos;
-
-            if (modifyRotation)
-                obj.transform.rotation = newRot;
         }
     }
 }

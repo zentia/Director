@@ -7,7 +7,6 @@ using System.Reflection;
 using AGE;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Profiling;
 using EditorExtension;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -49,7 +48,7 @@ namespace CinemaDirector
         private const string SAVEAS = "另存为";
 
         const string TITLE = "Timeline";
-        const string MENU_ITEM = "OSGame/Timeline %g";
+        const string MENU_ITEM = "Window/Timeline %g";
 
         private Texture settingsImage = null;
         private Texture rescaleImage = null;
@@ -98,7 +97,6 @@ namespace CinemaDirector
                     {
                         cutscene = runningActions[runningActions.Count - 1];
                         DirectorControl_PlayCutscene(directorControl, new CinemaDirectorArgs(cutscene));
-                        cutscene.PlantingBomb(cutscene.Duration, DestroyCutscene);
                     }
                 }
             }

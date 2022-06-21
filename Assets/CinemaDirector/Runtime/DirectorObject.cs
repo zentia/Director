@@ -25,7 +25,7 @@ namespace CinemaDirector
                 m_Parent = value;
             }
         }
-        [HideInInspector]
+        [ReadOnly]
         public List<DirectorObject> Children;
         private bool dirty;
         public bool Dirty

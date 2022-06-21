@@ -11,6 +11,8 @@ namespace CinemaDirector
     public partial class Cutscene : Action
     {
         [SerializeField]
+        private float playbackSpeed = 1f; // Multiplier for playback speed.
+        [SerializeField]
         private bool isLooping = true;
         private CutsceneState state = CutsceneState.Inactive;
         [TableList]
@@ -154,32 +156,12 @@ namespace CinemaDirector
 
         public void UpdateCutscene(float deltaTime)
         {
-            RefreshTemplateObject();
-            if (Application.isPlaying && state == CutsceneState.Playing)
-            {
-                RunningTime = CurrentTime;
-            }
-            else
-            {
-                var lastTime = RunningTime;
-                foreach (TrackGroup group in Children)
-                {
-                    group.UpdateTrackGroup(RunningTime + deltaTime, deltaTime);
-                }
+            RunningTime += (deltaTime * playbackSpeed);
 
-                foreach (var track in tracks)
-                {
-                    if (!track.enabled)
-                    {
-                        continue;
-                    }
-                    track.started = true;
-                }
-                ForceUpdate(RunningTime + deltaTime);
-                //RunningTime += deltaTime;
-                UpdateTempObjectForPreview(lastTime, RunningTime);
+            foreach (TrackGroup group in Children)
+            {
+                group.UpdateTrackGroup(RunningTime, deltaTime * playbackSpeed);
             }
-            DoSomethingWhilePlaying(RunningTime);
             if (state != CutsceneState.Scrubbing)
             {
                 if (RunningTime >= Duration || RunningTime < 0f)
@@ -188,27 +170,7 @@ namespace CinemaDirector
                 }
             }
         }
-
-        private float DoTime = 0;
-        private bool SomethingDone = false;
-        public delegate void DoFunc();
-        DoFunc DoFunction = null;
-        public void DoSomethingWhilePlaying(float rTime)
-        {
-            if (!SomethingDone && rTime >= DoTime)
-            {
-                if (DoFunction != null)
-                    DoFunction();
-                SomethingDone = true;
-            }
-        }
-
-        public void PlantingBomb(float time, DoFunc e)
-        {
-            DoTime = time;
-            DoFunction += e;
-        }
-
+        
         public void PreviewPlay()
         {
             if (state == CutsceneState.Inactive)
