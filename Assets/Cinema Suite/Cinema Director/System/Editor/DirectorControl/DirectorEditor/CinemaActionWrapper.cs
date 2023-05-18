@@ -15,7 +15,7 @@ public class CinemaActionWrapper : TimelineItemWrapper
         get => 
             this.duration;
         set => 
-            (this.duration = value);
+            this.duration = value;
     }
 }
 

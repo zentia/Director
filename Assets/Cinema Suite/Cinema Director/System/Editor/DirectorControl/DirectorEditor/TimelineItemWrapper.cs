@@ -20,7 +20,7 @@ public class TimelineItemWrapper
         get => 
             this.firetime;
         set => 
-            (this.firetime = value);
+            this.firetime = value;
     }
 }
 

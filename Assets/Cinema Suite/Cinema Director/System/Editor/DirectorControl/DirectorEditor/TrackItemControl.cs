@@ -368,7 +368,7 @@ public class TrackItemControl : DirectorBehaviourControl
         get => 
             this.track;
         set => 
-            (this.track = value);
+            this.track = value;
     }
 
     public TimelineTrackControl TrackControl
@@ -376,7 +376,7 @@ public class TrackItemControl : DirectorBehaviourControl
         get => 
             this.trackControl;
         set => 
-            (this.trackControl = value);
+            this.trackControl = value;
     }
 
     public int DrawPriority
@@ -384,7 +384,7 @@ public class TrackItemControl : DirectorBehaviourControl
         get => 
             this.drawPriority;
         set => 
-            (this.drawPriority = value);
+            this.drawPriority = value;
     }
 }
 

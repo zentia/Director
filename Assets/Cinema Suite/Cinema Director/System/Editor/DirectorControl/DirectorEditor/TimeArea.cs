@@ -167,7 +167,7 @@ public class TimeArea : ZoomableArea
         get => 
             this.horizontalTicks;
         set => 
-            (this.horizontalTicks = value);
+            this.horizontalTicks = value;
     }
 
     internal DirectorControlSettings settings

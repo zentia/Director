@@ -16,7 +16,7 @@ public class UnityBehaviourWrapper
         get => 
             this.behaviour;
         set => 
-            (this.behaviour = value);
+            this.behaviour = value;
     }
 
     public bool HasChanged
@@ -24,7 +24,7 @@ public class UnityBehaviourWrapper
         get => 
             this.hasChanged;
         set => 
-            (this.hasChanged = value);
+            this.hasChanged = value;
     }
 }
 

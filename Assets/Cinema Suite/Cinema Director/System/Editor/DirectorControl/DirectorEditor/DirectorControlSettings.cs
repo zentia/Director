@@ -13,7 +13,7 @@ internal class DirectorControlSettings
         get => 
             this.m_HRangeLocked;
         set => 
-            (this.m_HRangeLocked = value);
+            this.m_HRangeLocked = value;
     }
 
     internal float hRangeMax
@@ -21,7 +21,7 @@ internal class DirectorControlSettings
         get => 
             this.m_HRangeMax;
         set => 
-            (this.m_HRangeMax = value);
+            this.m_HRangeMax = value;
     }
 
     internal float HorizontalRangeMin
@@ -29,7 +29,7 @@ internal class DirectorControlSettings
         get => 
             this.m_HRangeMin;
         set => 
-            (this.m_HRangeMin = value);
+            this.m_HRangeMin = value;
     }
 
     internal bool hSlider
@@ -37,7 +37,7 @@ internal class DirectorControlSettings
         get => 
             this.m_HSlider;
         set => 
-            (this.m_HSlider = value);
+            this.m_HSlider = value;
     }
 
     internal bool scaleWithWindow
@@ -45,7 +45,7 @@ internal class DirectorControlSettings
         get => 
             this.m_ScaleWithWindow;
         set => 
-            (this.m_ScaleWithWindow = value);
+            this.m_ScaleWithWindow = value;
     }
 }
 

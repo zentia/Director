@@ -481,7 +481,7 @@ public class TrackGroupControl : SidebarControl
         get => 
             this.directorControl;
         set => 
-            (this.directorControl = value);
+            this.directorControl = value;
     }
 
     public class TrackGroupStyles
@@ -533,7 +533,7 @@ public class TrackGroupControl : SidebarControl
                 return this.addIcon;
             }
             set => 
-                (this.addIcon = value);
+                this.addIcon = value;
         }
 
         public GUIStyle LockIconLRG
@@ -547,7 +547,7 @@ public class TrackGroupControl : SidebarControl
                 return this.lockIconLRG;
             }
             set => 
-                (this.lockIconLRG = value);
+                this.lockIconLRG = value;
         }
 
         public GUIStyle UnlockIconLRG
@@ -561,7 +561,7 @@ public class TrackGroupControl : SidebarControl
                 return this.unlockIconLRG;
             }
             set => 
-                (this.unlockIconLRG = value);
+                this.unlockIconLRG = value;
         }
 
         public GUIStyle LockIconSM
@@ -575,7 +575,7 @@ public class TrackGroupControl : SidebarControl
                 return this.lockIconSM;
             }
             set => 
-                (this.lockIconSM = value);
+                this.lockIconSM = value;
         }
 
         public GUIStyle UnlockIconSM
@@ -589,7 +589,7 @@ public class TrackGroupControl : SidebarControl
                 return this.unlockIconSM;
             }
             set => 
-                (this.unlockIconSM = value);
+                this.unlockIconSM = value;
         }
 
         public GUIStyle TrackGroupArea
@@ -603,7 +603,7 @@ public class TrackGroupControl : SidebarControl
                 return this.trackGroupArea;
             }
             set => 
-                (this.trackGroupArea = value);
+                this.trackGroupArea = value;
         }
 
         public GUIStyle PickerStyle
@@ -617,7 +617,7 @@ public class TrackGroupControl : SidebarControl
                 return this.pickerStyle;
             }
             set => 
-                (this.pickerStyle = value);
+                this.pickerStyle = value;
         }
 
         public GUIStyle BackgroundSelected
@@ -631,7 +631,7 @@ public class TrackGroupControl : SidebarControl
                 return this.backgroundSelected;
             }
             set => 
-                (this.backgroundSelected = value);
+                this.backgroundSelected = value;
         }
 
         public GUIStyle BackgroundContentSelected
@@ -645,7 +645,7 @@ public class TrackGroupControl : SidebarControl
                 return this.backgroundContentSelected;
             }
             set => 
-                (this.backgroundContentSelected = value);
+                this.backgroundContentSelected = value;
         }
 
         public GUIStyle DirectorGroupIcon
@@ -659,7 +659,7 @@ public class TrackGroupControl : SidebarControl
                 return this.directorGroupIcon;
             }
             set => 
-                (this.directorGroupIcon = value);
+                this.directorGroupIcon = value;
         }
 
         public GUIStyle ActorGroupIcon
@@ -673,7 +673,7 @@ public class TrackGroupControl : SidebarControl
                 return this.actorGroupIcon;
             }
             set => 
-                (this.actorGroupIcon = value);
+                this.actorGroupIcon = value;
         }
 
         public GUIStyle MultiActorGroupIcon
@@ -687,7 +687,7 @@ public class TrackGroupControl : SidebarControl
                 return this.multiActorGroupIcon;
             }
             set => 
-                (this.multiActorGroupIcon = value);
+                this.multiActorGroupIcon = value;
         }
 
         public GUIStyle CharacterGroupIcon
@@ -701,7 +701,7 @@ public class TrackGroupControl : SidebarControl
                 return this.characterGroupIcon;
             }
             set => 
-                (this.characterGroupIcon = value);
+                this.characterGroupIcon = value;
         }
     }
 }

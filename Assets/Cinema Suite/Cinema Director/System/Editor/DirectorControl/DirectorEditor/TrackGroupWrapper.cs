@@ -40,7 +40,7 @@ public class TrackGroupWrapper : UnityBehaviourWrapper
         get => 
             this.ordinal;
         set => 
-            (this.ordinal = value);
+            this.ordinal = value;
     }
 }
 

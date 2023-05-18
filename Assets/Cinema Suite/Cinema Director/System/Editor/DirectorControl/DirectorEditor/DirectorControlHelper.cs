@@ -18,9 +18,7 @@ internal class DirectorControlHelper
             }
             catch (ReflectionTypeLoadException exception)
             {
-                Debug.LogError($"Cinema Director: Could not load types from assembly "{assembly.GetName()}"
-{exception.Message}
-{exception.StackTrace}");
+                Debug.LogError($"Cinema Director: Could not load types from assembly {assembly.GetName()}{exception.Message}{exception.StackTrace}");
                 continue;
             }
             foreach (System.Type type in types)

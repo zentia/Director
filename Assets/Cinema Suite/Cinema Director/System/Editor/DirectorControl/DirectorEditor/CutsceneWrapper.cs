@@ -36,7 +36,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
         get => 
             this.duration;
         set => 
-            (this.duration = value);
+            this.duration = value;
     }
 
     public float RunningTime
@@ -44,7 +44,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
         get => 
             this.runningTime;
         set => 
-            (this.runningTime = value);
+            this.runningTime = value;
     }
 
     public bool IsPlaying
@@ -52,7 +52,7 @@ public class CutsceneWrapper : UnityBehaviourWrapper
         get => 
             this.isPlaying;
         set => 
-            (this.isPlaying = value);
+            this.isPlaying = value;
     }
 
     public IEnumerable<TrackGroupWrapper> TrackGroups =>

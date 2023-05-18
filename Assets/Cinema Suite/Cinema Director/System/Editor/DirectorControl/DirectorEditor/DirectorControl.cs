@@ -932,7 +932,7 @@ public class DirectorControl : TimeArea
         get => 
             this.directorState.ResizeOption;
         set => 
-            (this.directorState.ResizeOption = value);
+            this.directorState.ResizeOption = value;
     }
 
     public bool IsSnappingEnabled
@@ -940,7 +940,7 @@ public class DirectorControl : TimeArea
         get => 
             this.directorState.IsSnapEnabled;
         set => 
-            (this.directorState.IsSnapEnabled = value);
+            this.directorState.IsSnapEnabled = value;
     }
 
     public bool InPreviewMode

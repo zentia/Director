@@ -744,7 +744,6 @@ public abstract class CinemaCurveClipItemControl : ActionItemControl
                 for (int i = 0; i < wrapper2.KeyframeCount; i++)
                 {
                     int controlID;
-                    int controlID;
                     Keyframe keyframe = wrapper2.GetKeyframe(i);
                     CinemaKeyframeWrapper keyframeWrapper = wrapper2.GetKeyframeWrapper(i);
                     bool flag1 = (keyframe.time == clipCurveWrapper.Firetime) || (keyframe.time == (clipCurveWrapper.Firetime + clipCurveWrapper.Duration));
@@ -1583,7 +1582,7 @@ public abstract class CinemaCurveClipItemControl : ActionItemControl
         get => 
             this.isEditing;
         set => 
-            (this.isEditing = value);
+            this.isEditing = value;
     }
 
     public bool HaveCurvesChanged
@@ -1591,7 +1590,7 @@ public abstract class CinemaCurveClipItemControl : ActionItemControl
         get => 
             this.haveCurvesChanged;
         set => 
-            (this.haveCurvesChanged = value);
+            this.haveCurvesChanged = value;
     }
 
     private class CurveContext

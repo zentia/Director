@@ -379,7 +379,7 @@ public class TimelineTrackControl : SidebarControl
     public DirectorControlState State
     {
         set => 
-            (this.state = value);
+            this.state = value;
     }
 
     public IEnumerable<TrackItemControl> Controls =>
@@ -390,7 +390,7 @@ public class TimelineTrackControl : SidebarControl
         get => 
             this.trackGroupControl;
         set => 
-            (this.trackGroupControl = value);
+            this.trackGroupControl = value;
     }
 
     public bool IsSelected =>
@@ -502,7 +502,7 @@ public class TimelineTrackControl : SidebarControl
                 return this.trackItemStyle;
             }
             set => 
-                (this.trackItemStyle = value);
+                this.trackItemStyle = value;
         }
 
         public GUIStyle CurveTrackItemStyle
@@ -516,7 +516,7 @@ public class TimelineTrackControl : SidebarControl
                 return this.curveTrackItemStyle;
             }
             set => 
-                (this.curveTrackItemStyle = value);
+                this.curveTrackItemStyle = value;
         }
 
         public GUIStyle TrackItemSelectedStyle
@@ -530,7 +530,7 @@ public class TimelineTrackControl : SidebarControl
                 return this.trackItemSelectedStyle;
             }
             set => 
-                (this.trackItemSelectedStyle = value);
+                this.trackItemSelectedStyle = value;
         }
 
         public GUIStyle CurveTrackItemSelectedStyle
@@ -544,7 +544,7 @@ public class TimelineTrackControl : SidebarControl
                 return this.curveTrackItemSelectedStyle;
             }
             set => 
-                (this.curveTrackItemSelectedStyle = value);
+                this.curveTrackItemSelectedStyle = value;
         }
     }
 }

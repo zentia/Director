@@ -43,7 +43,7 @@
             get => 
                 this.behaviour;
             set => 
-                (this.behaviour = value);
+                this.behaviour = value;
         }
 
         public bool IsSelected =>

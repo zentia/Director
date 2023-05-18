@@ -41,7 +41,7 @@ public class CinemaActionFixedWrapper : CinemaActionWrapper
         get => 
             this.itemLength;
         set => 
-            (this.itemLength = value);
+            this.itemLength = value;
     }
 }
 

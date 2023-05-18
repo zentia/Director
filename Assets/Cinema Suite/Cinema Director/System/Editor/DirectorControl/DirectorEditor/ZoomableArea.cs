@@ -38,7 +38,7 @@ public class ZoomableArea
         GUILayout.BeginArea(this.drawRect);
         if (handleUserInteraction)
         {
-            int controlID = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Native, drawArea);
+            int controlID = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Passive, drawArea);
             switch (Event.current.GetTypeForControl(controlID))
             {
                 case EventType.MouseDown:
@@ -258,7 +258,7 @@ public class ZoomableArea
         get => 
             this.m_Scale;
         set => 
-            (this.m_Scale = value);
+            this.m_Scale = value;
     }
 
     internal Vector2 Translation
@@ -266,7 +266,7 @@ public class ZoomableArea
         get => 
             this.m_Translation;
         set => 
-            (this.m_Translation = value);
+            this.m_Translation = value;
     }
 
     internal float bottommargin
@@ -274,7 +274,7 @@ public class ZoomableArea
         get => 
             this.m_MarginBottom;
         set => 
-            (this.m_MarginBottom = value);
+            this.m_MarginBottom = value;
     }
 
     internal virtual Bounds drawingBounds
@@ -294,7 +294,7 @@ public class ZoomableArea
         get => 
             this.m_HRangeLocked;
         set => 
-            (this.m_HRangeLocked = value);
+            this.m_HRangeLocked = value;
     }
 
     internal float hRangeMax
@@ -302,7 +302,7 @@ public class ZoomableArea
         get => 
             this.m_HRangeMax;
         set => 
-            (this.m_HRangeMax = value);
+            this.m_HRangeMax = value;
     }
 
     internal float hRangeMin
@@ -310,7 +310,7 @@ public class ZoomableArea
         get => 
             this.m_HRangeMin;
         set => 
-            (this.m_HRangeMin = value);
+            this.m_HRangeMin = value;
     }
 
     internal bool hSlider
@@ -330,7 +330,7 @@ public class ZoomableArea
         get => 
             this.m_IgnoreScrollWheelUntilClicked;
         set => 
-            (this.m_IgnoreScrollWheelUntilClicked = value);
+            this.m_IgnoreScrollWheelUntilClicked = value;
     }
 
     internal float leftmargin
@@ -338,13 +338,13 @@ public class ZoomableArea
         get => 
             this.m_MarginLeft;
         set => 
-            (this.m_MarginLeft = value);
+            this.m_MarginLeft = value;
     }
 
     internal float margin
     {
         set => 
-            (this.m_MarginLeft = this.m_MarginRight = this.m_MarginTop = this.m_MarginBottom = value);
+            this.m_MarginLeft = this.m_MarginRight = this.m_MarginTop = this.m_MarginBottom = value;
     }
 
     internal Vector2 mousePositionInDrawing =>
@@ -379,7 +379,7 @@ public class ZoomableArea
         get => 
             this.m_MarginRight;
         set => 
-            (this.m_MarginRight = value);
+            this.m_MarginRight = value;
     }
 
     public Vector2 scale =>
@@ -390,7 +390,7 @@ public class ZoomableArea
         get => 
             this.m_ScaleWithWindow;
         set => 
-            (this.m_ScaleWithWindow = value);
+            this.m_ScaleWithWindow = value;
     }
 
     internal float HScrollMax
@@ -398,7 +398,7 @@ public class ZoomableArea
         get => 
             this.m_hScrollMax;
         set => 
-            (this.m_hScrollMax = value);
+            this.m_hScrollMax = value;
     }
 
     internal Rect shownArea
@@ -453,7 +453,7 @@ public class ZoomableArea
         get => 
             this.m_MarginTop;
         set => 
-            (this.m_MarginTop = value);
+            this.m_MarginTop = value;
     }
 
     [Serializable]
