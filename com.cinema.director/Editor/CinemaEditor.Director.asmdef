@@ -1,0 +1,14 @@
+{
+    "name": "CinemaEditor.Director",
+ 
+    "references": [
+      "CinemaRunutime.Director"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+	"versionDefines": [
+        
+    ]
+}
