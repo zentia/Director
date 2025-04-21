@@ -29,7 +29,7 @@ public class ActorTrackGroupInspector : Editor
     {
         if (inspectorIcon == null)
         {
-            inspectorIcon = EditorGUIUtility.Load("Cinema Suite/Cinema Director/Director_InspectorIcon.png") as Texture;
+            inspectorIcon = Resources.Load("Director_InspectorIcon") as Texture;
         }
         if (inspectorIcon == null)
         {

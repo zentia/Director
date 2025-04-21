@@ -6,3 +6,6 @@ obj
 *.sln
 *.csproj
 .vsconfig
+Packages/packages-lock.json
+UserSettings
+Temp

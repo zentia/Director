@@ -371,8 +371,8 @@ public class DirectorControl : TimeArea
     public void OnLoad(GUISkin skin)
     {
         this.customSkin = skin;
-        string str = "Cinema Suite/Cinema Director/";
-        string str2 = ".png";
+        string str = "";
+        string str2 = "";
         float min = 0f;
         float @float = 60f;
         if (EditorPrefs.HasKey("DirectorControl.areaX"))
@@ -394,7 +394,7 @@ public class DirectorControl : TimeArea
         }
         if (this.playButton == null)
         {
-            this.playButton = EditorGUIUtility.Load(str + "Director_PlayIcon" + str2) as Texture;
+            this.playButton = Resources.Load(str + "Director_PlayIcon" + str2) as Texture;
         }
         if (this.playButton == null)
         {
@@ -402,7 +402,7 @@ public class DirectorControl : TimeArea
         }
         if (this.pauseButton == null)
         {
-            this.pauseButton = EditorGUIUtility.Load(str + "Director_PauseIcon" + str2) as Texture;
+            this.pauseButton = Resources.Load(str + "Director_PauseIcon" + str2) as Texture;
         }
         if (this.pauseButton == null)
         {
@@ -410,7 +410,7 @@ public class DirectorControl : TimeArea
         }
         if (this.stopButton == null)
         {
-            this.stopButton = EditorGUIUtility.Load(str + "Director_StopIcon" + str2) as Texture;
+            this.stopButton = Resources.Load(str + "Director_StopIcon" + str2) as Texture;
         }
         if (this.stopButton == null)
         {
@@ -418,7 +418,7 @@ public class DirectorControl : TimeArea
         }
         if (this.frameForwardButton == null)
         {
-            this.frameForwardButton = EditorGUIUtility.Load(str + "Director_FrameForwardIcon" + str2) as Texture;
+            this.frameForwardButton = Resources.Load(str + "Director_FrameForwardIcon" + str2) as Texture;
         }
         if (this.frameForwardButton == null)
         {
@@ -426,7 +426,7 @@ public class DirectorControl : TimeArea
         }
         if (this.frameBackwardButton == null)
         {
-            this.frameBackwardButton = EditorGUIUtility.Load(str + "Director_FrameBackwardIcon" + str2) as Texture;
+            this.frameBackwardButton = Resources.Load(str + "Director_FrameBackwardIcon" + str2) as Texture;
         }
         if (this.frameBackwardButton == null)
         {
@@ -434,7 +434,7 @@ public class DirectorControl : TimeArea
         }
         if (this.scrubHead == null)
         {
-            this.scrubHead = EditorGUIUtility.Load(str + "Director_Playhead" + str2) as Texture;
+            this.scrubHead = Resources.Load(str + "Director_Playhead" + str2) as Texture;
         }
         if (this.scrubHead == null)
         {
@@ -442,7 +442,7 @@ public class DirectorControl : TimeArea
         }
         if (this.scrubDurationHead == null)
         {
-            this.scrubDurationHead = EditorGUIUtility.Load(str + "Director_Duration_Playhead" + str2) as Texture;
+            this.scrubDurationHead = Resources.Load(str + "Director_Duration_Playhead" + str2) as Texture;
         }
         if (this.scrubDurationHead == null)
         {

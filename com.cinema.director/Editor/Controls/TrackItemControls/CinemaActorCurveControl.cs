@@ -128,14 +128,13 @@ public class CinemaActorCurveControl : CinemaCurveControl
                 currentlyEditingRotation = data.PropertyName == "localEulerAngles";
 
                 Component component = clipCurve.Actor.GetComponent(data.Type);
-#if UNITY_2017_2_OR_NEWER
                 if (component != null)
                 {
                     Type type = component.GetType();
 
                     // Deal with a special case, use the new TransformUtils to get the rotation value from the editor field.
                     if (data.IsProperty && type == typeof(Transform) && data.PropertyName == "localEulerAngles")
-                    {                        
+                    {
                         value = UnityEditor.TransformUtils.GetInspectorRotation(component.transform); // TransformUtils added in 2017.2                        
                     }
                     else
@@ -143,10 +142,10 @@ public class CinemaActorCurveControl : CinemaCurveControl
                         value = clipCurve.GetCurrentValue(component, data.PropertyName, data.IsProperty);
                     }
                 }
-#else
-                value = clipCurve.GetCurrentValue(component, data.PropertyName, data.IsProperty);
-#endif
-
+                else
+                {
+                    continue;
+                }
                 PropertyTypeInfo typeInfo = data.PropertyType;
 
                 if (typeInfo == PropertyTypeInfo.Int || typeInfo == PropertyTypeInfo.Long)

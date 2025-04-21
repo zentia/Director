@@ -63,9 +63,19 @@ public class ActorClipCurveInspector : Editor
                     currentCurves.Add(curveStrings);
 
                     Component c = actor.GetComponent(typeProperty.stringValue);
-
+                    if (c == null)
+                        continue;
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(new GUIContent(string.Format("{0}.{1}", typeProperty.stringValue, DirectorHelper.GetUserFriendlyName(typeProperty.stringValue, memberProperty.stringValue)), EditorGUIUtility.ObjectContent(c, c.GetType()).image));
+                    var objectContent = EditorGUIUtility.ObjectContent(c, c.GetType());
+                    if (objectContent != null)
+                    {
+                        EditorGUILayout.LabelField(new GUIContent(string.Format("{0}.{1}", typeProperty.stringValue, DirectorHelper.GetUserFriendlyName(typeProperty.stringValue, memberProperty.stringValue)), objectContent.image));
+                    }
+                    else
+                    {
+                        EditorGUILayout.LabelField(new GUIContent(string.Format("{0}.{1}", typeProperty.stringValue, DirectorHelper.GetUserFriendlyName(typeProperty.stringValue, memberProperty.stringValue))));
+                    }
+                    
                     if (GUILayout.Button("-", GUILayout.Width(24f)))
                     {
                         curveData.DeleteArrayElementAtIndex(i);

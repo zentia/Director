@@ -128,7 +128,7 @@ public class DirectorWindow : EditorWindow
 #endif
 
         GUISkin skin = ScriptableObject.CreateInstance<GUISkin>();
-        skin = (EditorGUIUtility.isProSkin) ? EditorGUIUtility.Load("Cinema Suite/Cinema Director/" + PRO_SKIN + ".guiskin") as GUISkin : EditorGUIUtility.Load("Cinema Suite/Cinema Director/" + FREE_SKIN + ".guiskin") as GUISkin;
+        skin = (EditorGUIUtility.isProSkin) ? Resources.Load(PRO_SKIN) as GUISkin : EditorGUIUtility.Load(FREE_SKIN) as GUISkin;
         loadTextures();
 
 #if UNITY_5 && !UNITY_5_0 || UNITY_2017_1_OR_NEWER
@@ -556,78 +556,78 @@ public class DirectorWindow : EditorWindow
     /// </summary>
     private void loadTextures()
     {
-        string dir = "Cinema Suite/Cinema Director/";
+        string dir = "";
         string suffix = EditorGUIUtility.isProSkin ? "_Light" : "_Dark";
-        string filetype_png = ".png";
+        string filetype_png = "";
         string missing = " is missing from Resources folder.";
 
-        settingsImage = EditorGUIUtility.Load(dir + SETTINGS_ICON + suffix + filetype_png) as Texture;
+        settingsImage = Resources.Load(SETTINGS_ICON + suffix) as Texture;
         if (settingsImage == null)
         {
             Debug.Log(SETTINGS_ICON + suffix + missing);
         }
 
-        rescaleImage = EditorGUIUtility.Load(dir + HORIZONTAL_RESCALE_ICON + suffix + filetype_png) as Texture;
+        rescaleImage = Resources.Load(HORIZONTAL_RESCALE_ICON + suffix) as Texture;
         if (rescaleImage == null)
         {
             Debug.Log(HORIZONTAL_RESCALE_ICON + suffix + missing);
         }
 
-        zoomInImage = EditorGUIUtility.Load(dir + ZOOMIN_ICON + suffix + filetype_png) as Texture;
+        zoomInImage = Resources.Load(dir + ZOOMIN_ICON + suffix + filetype_png) as Texture;
         if (zoomInImage == null)
         {
             Debug.Log(ZOOMIN_ICON + suffix + missing);
         }
 
-        zoomOutImage = EditorGUIUtility.Load(dir + ZOOMOUT_ICON + suffix + filetype_png) as Texture;
+        zoomOutImage = Resources.Load(dir + ZOOMOUT_ICON + suffix + filetype_png) as Texture;
         if (zoomOutImage == null)
         {
             Debug.Log(ZOOMOUT_ICON + suffix + missing);
         }
 
-        snapImage = EditorGUIUtility.Load(dir + MAGNET_ICON + suffix + filetype_png) as Texture;
+        snapImage = Resources.Load(dir + MAGNET_ICON + suffix + filetype_png) as Texture;
         if (snapImage == null)
         {
             Debug.Log(MAGNET_ICON + suffix + missing);
         }
 
-        rollingEditImage = EditorGUIUtility.Load(dir + "Director_RollingIcon" + filetype_png) as Texture;
+        rollingEditImage = Resources.Load(dir + "Director_RollingIcon" + filetype_png) as Texture;
         if (rollingEditImage == null)
         {
             Debug.Log("Rolling edit icon missing from Resources folder.");
         }
 
-        rippleEditImage = EditorGUIUtility.Load(dir + "Director_RippleIcon" + filetype_png) as Texture;
+        rippleEditImage = Resources.Load(dir + "Director_RippleIcon" + filetype_png) as Texture;
         if (rippleEditImage == null)
         {
             Debug.Log("Ripple edit icon missing from Resources folder.");
         }
 
-        pickerImage = EditorGUIUtility.Load(dir + PICKER_ICON + suffix + filetype_png) as Texture;
+        pickerImage = Resources.Load(dir + PICKER_ICON + suffix + filetype_png) as Texture;
         if (pickerImage == null)
         {
             Debug.Log(PICKER_ICON + suffix + missing);
         }
 
-        refreshImage = EditorGUIUtility.Load(dir + REFRESH_ICON + suffix + filetype_png) as Texture;
+        refreshImage = Resources.Load(dir + REFRESH_ICON + suffix + filetype_png) as Texture;
         if (refreshImage == null)
         {
             Debug.Log(REFRESH_ICON + suffix + missing);
         }
 
-        titleImage = EditorGUIUtility.Load(dir + TITLE_ICON + suffix + filetype_png) as Texture;
+        titleImage = Resources.Load(dir + TITLE_ICON + suffix + filetype_png) as Texture;
         if (titleImage == null)
         {
             Debug.Log(TITLE_ICON + suffix + missing);
         }
 
-        cropImage = EditorGUIUtility.Load(dir + "Director_Resize_Crop" + suffix + filetype_png) as Texture;
+        cropImage = Resources.Load(dir + "Director_Resize_Crop" + suffix + filetype_png) as Texture;
         if (cropImage == null)
         {
             Debug.Log("Director_Resize_Crop" + suffix + missing);
         }
 
-        scaleImage = EditorGUIUtility.Load(dir + "Director_Resize_Scale" + suffix + filetype_png) as Texture;
+        scaleImage = Resources.Load(dir + "Director_Resize_Scale" + suffix + filetype_png) as Texture;
         if (scaleImage == null)
         {
             Debug.Log("Director_Resize_Crop" + suffix + missing);

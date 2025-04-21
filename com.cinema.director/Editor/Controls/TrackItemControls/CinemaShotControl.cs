@@ -14,7 +14,7 @@ public class CinemaShotControl : CinemaActionControl
     public override void Initialize(TimelineItemWrapper wrapper, TimelineTrackWrapper track)
     {
         base.Initialize(wrapper, track);
-        actionIcon = EditorGUIUtility.Load("Cinema Suite/Cinema Director/Director_ShotIcon.png") as Texture;
+        actionIcon = Resources.Load("Director_ShotIcon") as Texture;
     }
 
     public override void Draw(DirectorControlState state)
