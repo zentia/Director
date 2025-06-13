@@ -1,0 +1,47 @@
+{
+    "name": "Unity.Rider.Editor",
+    "rootNamespace": "Packages",
+    "references": [
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21",
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "JetBrains.Rider.PathLocator.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_2019_2_OR_NEWER"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.test-framework",
+            "expression": "1.1.8",
+            "define": "TEST_FRAMEWORK"
+        },
+        {
+            "name": "Unity",
+            "expression": "2021.2.0a9",
+            "define": "ROSLYN_ANALYZER_FIX"
+        },
+        {
+            "name": "Unity",
+            "expression": "[2021.1.2f1,2021.2.0a1]",
+            "define": "ROSLYN_ANALYZER_FIX"
+        },
+        {
+            "name": "Unity",
+            "expression": "[2020.3.6f1,2021.0]",
+            "define": "ROSLYN_ANALYZER_FIX"
+        }
+    ],
+    "noEngineReferences": false
+}

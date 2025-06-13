@@ -1,0 +1,16 @@
+{
+  "name": "com.sirenix.odin",
+  "version": "1.0.0",
+  "displayName": "odin",
+  "description": "odin",
+  "documentationUrl": "",
+  "dependencies": {},
+  "keywords": [
+    "odin"
+  ],
+  "author": {
+    "name": "unknown",
+    "email": "unknown@tencent.com",
+    "url": ""
+  }
+}
