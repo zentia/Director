@@ -1,0 +1,36 @@
+{
+    "name": "Scripts.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1493d081626e8bf48bfd5fca5c60d21d",
+        "GUID:c475b1fe6bd60794fbb76c3d30eaaa97",
+        "GUID:36b2a75fa596e024998eeb9ab12f1500",
+        "GUID:73881b79978cf6f40bf2676988b3fd30"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "monitorDirectory": "../Program/GameScripts/",
+    "isEditor": true,
+    "isFirstPass": false,
+    "copyDest": "Assets/Plugins/GameScripts",
+    "cullScriptWithSpecialPathKeyword": [
+        "Program/GameScripts/Build/",
+        "Program/GameScripts/DevelopmentReference/",
+        "Program/GameScripts/Packages/",
+        "Program/GameScripts/Tools/",
+        "Program/GameScripts/Assets/Plugins/",
+        "Program/GameScripts/Assets/OSGame/3rd-Party/Pandora/",
+        "Program/GameScripts/Assets/Scripts/Rendering/Yarp/",
+        "Program/GameScripts/Assets/Scripts/Rendering/Gear/",
+        "Program/GameScripts/Assets/Editor/EarlyEditor/"
+    ]
+}
