@@ -9,3 +9,5 @@ obj
 Packages/packages-lock.json
 UserSettings
 Temp
+.idea
+Packages
