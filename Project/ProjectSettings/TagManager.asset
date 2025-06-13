@@ -3,41 +3,81 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - FxTemporaire
+  - shield
+  - SCI
+  - MeshVisible
+  - BulletTail
+  - MiniMap_Grass
+  - MiniMap_Mountain
+  - MiniMap_Block
+  - MiniMap_City
+  - MiniMap_Field
+  - MiniMap_CityBlock
+  - MiniMap_CityGate
+  - MiniMap_CityTop
+  - Export
+  - NoExport
+  - TriggerLevelOffset
+  - effect
+  - EditorPreviewPrefab
+  - NestedWidgetObject
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - RuntimePreview0
   - Water
   - UI
-  - 
-  - 
-  - PostProcessing
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - RuntimePreview
+  - RuntimePreview2
+  - Particles
+  - Scene
+  - Actor
+  - OverSceneLowerParticles
+  - UI_System
+  - Physics
+  - PVPLoading3DUI
+  - UIRaw
+  - UI_Background
+  - UI_Foreground
+  - UI_BottomBG
+  - Lobby_Interactable
+  - 3DUI
+  - PVPLoadingUI
+  - Skybox
+  - Block
+  - Distortion
+  - Road
+  - FastWaterReflection
+  - FastWaterReflectionTransparent
+  - AutoObstacle
+  - Terrain
+  - PartialSceneObject
+  - Hide
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: NewbieGuide
+    uniqueID: 2865478067
+    locked: 0
+  - name: System
+    uniqueID: 154470767
+    locked: 0
+  - name: EditorSimulate
+    uniqueID: 2217502395
+    locked: 0
+  - name: Distortion
+    uniqueID: 1465593097
+    locked: 0
+  - name: ReceiveDynamicShadow_
+    uniqueID: 444705155
+    locked: 0
+  - name: CastDynamicShadow_
+    uniqueID: 1373643801
+    locked: 0
+  - name: DarkMask
+    uniqueID: 1176896823
     locked: 0

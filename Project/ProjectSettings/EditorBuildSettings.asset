@@ -4,5 +4,13 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
-  m_configObjects: {}
+  m_Scenes:
+  - enabled: 1
+    path: Assets/OSGame/Scene/OSGBoot.unity
+    guid: 54658a07bced105408c44f64a92a1eef
+  - enabled: 1
+    path: Assets/OSGame/Scene/OSGLobby.unity
+    guid: 7d8e71590d98ef64d84d2794841a0bf3
+  - enabled: 1
+    path: Assets/OSGame/Scene/EmptyScene.unity
+    guid: 82300bf9b1fd74b479c084062f336741
