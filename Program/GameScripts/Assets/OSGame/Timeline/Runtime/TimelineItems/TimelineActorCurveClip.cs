@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Assets.Plugins.Common;
-using Highlight;
 using UnityEngine;
-using UnityService.Xml.Serialization;
 
 namespace TimelineRuntime
 {
@@ -67,7 +63,7 @@ namespace TimelineRuntime
                 }
                 else
                 {
-                    var go = timeline.sceneRoot.FindChildBFS(ObjectSpaceId.path);
+                    var go = TimelineRuntimeHelper.FindChildBFS(timeline.sceneRoot,ObjectSpaceId.path);
                     if (go != null)
                     {
                         m_ObjectSpace = go.transform;
@@ -82,189 +78,133 @@ namespace TimelineRuntime
         {
             if (Firetime <= time && time <= Firetime + Duration)
             {
-                CurveData.ForEach(memberCurveClipData =>
+                foreach (var memberCurveClipData in CurveData)
                 {
                     if (timeline.SampleDelegate != null)
                     {
-                        if (!timeline.SampleDelegate(memberCurveClipData, actor, time) && !m_logErrored)
+                        if (!timeline.SampleDelegate(memberCurveClipData, actor, time, m_ObjectSpace) && !m_logErrored)
                         {
                             m_logErrored = true;
-                            Log.LogE(LogTag.Timeline, "SampleDelegate return false, timeline: {0}, propertyName: {1}", timeline.name, memberCurveClipData.PropertyName);
+                            Debug.LogErrorFormat("SampleDelegate return false, timeline: {0}, propertyName: {1}", timeline.name, memberCurveClipData.PropertyName);
                         }
-                        return;
                     }
-
-                    if (memberCurveClipData.IsProperty)
+                    else
                     {
-                        if (m_ObjectSpace != null)
+                        if (memberCurveClipData.IsProperty)
                         {
+                            if (m_ObjectSpace != null)
+                            {
+                                switch (memberCurveClipData.PropertyName)
+                                {
+                                    case "position":
+                                        actor.transform.position = m_ObjectSpace.localToWorldMatrix.MultiplyPoint(EvaluateVector3(memberCurveClipData, time));
+                                        break;
+                                    case "rotation":
+                                        actor.transform.rotation = m_ObjectSpace.rotation * EvaluateQuaternion(memberCurveClipData, time);
+                                        break;
+                                    case "localPosition":
+                                    {
+                                        var relatePosition = m_ObjectSpace.TransformPoint(EvaluateVector3(memberCurveClipData, time));
+                                        var parent = actor.parent;
+                                        actor.transform.localPosition = parent != null ? parent.InverseTransformPoint(relatePosition) : relatePosition;
+                                    }
+                                        break;
+                                    case "localEulerAngles":
+                                        actor.transform.rotation = m_ObjectSpace.rotation * Quaternion.Euler(EvaluateVector3(memberCurveClipData, time));
+                                        break;
+                                    case "localRotation":
+                                    {
+                                        var rot = m_ObjectSpace.rotation * EvaluateQuaternion(memberCurveClipData, time);
+                                        var parent = actor.parent;
+                                        if (parent != null)
+                                        {
+                                            rot *= parent.rotation;
+                                        }
+                                        actor.transform.rotation = rot;
+                                    }
+                                        break;
+                                }
+                            }
                             switch (memberCurveClipData.PropertyName)
                             {
                                 case "position":
-                                    actor.transform.position = m_ObjectSpace.localToWorldMatrix.MultiplyPoint(EvaluateVector3(memberCurveClipData, time));
-                                    return;
+                                    actor.transform.position = EvaluateVector3(memberCurveClipData, time);
+                                    break;
                                 case "rotation":
-                                    actor.transform.rotation = m_ObjectSpace.rotation * EvaluateQuaternion(memberCurveClipData, time);
-                                    return;
+                                    actor.transform.rotation = EvaluateQuaternion(memberCurveClipData, time);
+                                    break;
                                 case "localPosition":
-                                {
-                                    var relatePosition = m_ObjectSpace.TransformPoint(EvaluateVector3(memberCurveClipData, time));
-                                    var parent = actor.parent;
-                                    actor.transform.localPosition = parent != null ? parent.InverseTransformPoint(relatePosition) : relatePosition;
-                                }
-                                    return;
+                                    actor.transform.localPosition = TimelineActorCurveClip.EvaluateVector3(memberCurveClipData, time);
+                                    break;
                                 case "localEulerAngles":
-                                    actor.transform.rotation = m_ObjectSpace.rotation * Quaternion.Euler(EvaluateVector3(memberCurveClipData, time));
-                                    return;
+                                    actor.transform.rotation = Quaternion.Euler(TimelineActorCurveClip.EvaluateVector3(memberCurveClipData, time));
+                                    break;
                                 case "localRotation":
+                                    actor.transform.rotation = EvaluateQuaternion(memberCurveClipData, time);
+                                    break;
+                                case "color":
                                 {
-                                    var rot = m_ObjectSpace.rotation * EvaluateQuaternion(memberCurveClipData, time);
-                                    var parent = actor.parent;
-                                    if (parent != null)
+                                    var l = actor.GetComponent<Light>();
+                                    if (l == null)
+                                        break;
+                                    l.color = EvaluateColor(memberCurveClipData, time);
+                                }
+                                    break;
+                                case "intensity":
+                                {
+                                    var l = actor.GetComponent<Light>();
+                                    if (l == null)
+                                        break;
+                                    l.intensity = EvaluateFloat(memberCurveClipData, time);
+                                }
+                                    break;
+                                case "fov":
+                                case "fieldOfView":
+                                {
+                                    var c = actor.GetComponent<Camera>();
+                                    if (c == null)
+                                        break;
+                                    c.fieldOfView = EvaluateFloat(memberCurveClipData, time);
+                                    break;
+                                }
+                                default:
+                                {
+                                    var component = actor.GetComponent(memberCurveClipData.Type);
+                                    if (component == null)
+                                        break;
+                                    var componentType = component.GetType();
+                                    var propertyInfo = ReflectionHelper.GetProperty(componentType, memberCurveClipData.PropertyName);
+                                    if (propertyInfo == null)
                                     {
-                                        rot *= parent.rotation;
+                                        break;
                                     }
-                                    actor.transform.rotation = rot;
+                                    var value = Evaluate(memberCurveClipData, time, propertyInfo.PropertyType);
+                                    if (propertyInfo.PropertyType == value.GetType())
+                                    {
+                                        propertyInfo.SetValue(component, value, null);
+                                    }
+                                    else
+                                    {
+                                        Debug.LogErrorFormat("Actor={0},Component={1},Property={2},TargetType={3}", actor.name, componentType, memberCurveClipData.PropertyName, value.GetType());
+                                    }
                                 }
-                                    return;
+                                    break;
                             }
                         }
-                        switch (memberCurveClipData.PropertyName)
+                        else
                         {
-                            case "position":
-                                actor.transform.position = EvaluateVector3(memberCurveClipData, time);
-                                return;
-                            case "rotation":
-                                actor.transform.rotation = EvaluateQuaternion(memberCurveClipData, time);
-                                return;
-                            case "localPosition":
-                                actor.transform.localPosition = EvaluateVector3(memberCurveClipData, time);
-                                return;
-                            case "localEulerAngles":
-                                actor.transform.rotation = Quaternion.Euler(EvaluateVector3(memberCurveClipData, time));
-                                return;
-                            case "localRotation":
-                                actor.transform.rotation = EvaluateQuaternion(memberCurveClipData, time);
-                                return;
-                            case "color":
+                            var component = actor.GetComponent(memberCurveClipData.Type);
+                            if (component == null)
+                                break;
+                            var componentType = component.GetType();
+                            var fieldInfo = ReflectionHelper.GetField(componentType, memberCurveClipData.PropertyName);
+                            if (fieldInfo != null)
                             {
-                                var l = actor.GetComponent<Light>();
-                                if (l == null)
-                                    return;
-                                l.color = EvaluateColor(memberCurveClipData, time);
+                                fieldInfo.SetValue(component, Evaluate(memberCurveClipData, time, fieldInfo.FieldType));
                             }
-                                return;
-                            case "intensity":
-                            {
-                                var l = actor.GetComponent<Light>();
-                                if (l == null)
-                                    return;
-                                l.intensity = EvaluateFloat(memberCurveClipData, time);
-                            }
-                                return;
-                            case "fov":
-                            case "fieldOfView":
-                            {
-                                var c = actor.GetComponent<Camera>();
-                                if (c == null)
-                                    return;
-                                c.fieldOfView = EvaluateFloat(memberCurveClipData, time);
-                            }
-                                return;
-                            case "vPosition":
-                            {
-                                var v = actor.GetComponent<VirtualCamera>();
-                                if (v != null)
-                                {
-                                    v.Position = EvaluateVector3(memberCurveClipData, time);
-                                }
-                            }
-                                return;
-                            case "vAngles":
-                            {
-                                var v = actor.GetComponent<VirtualCamera>();
-                                if (v != null)
-                                {
-                                    v.Angles = EvaluateVector3(memberCurveClipData, time);
-                                }
-                            }
-                                return;
-                            case "vFov":
-                            {
-                                var v = actor.GetComponent<VirtualCamera>();
-                                if (v != null)
-                                {
-                                    v.FieldOfView = EvaluateFloat(memberCurveClipData, time);
-                                }
-                            }
-                                return;
-                            default:
-                            {
-                                var component = actor.GetComponent(memberCurveClipData.Type);
-                                if (component == null)
-                                    return;
-                                var componentType = component.GetType();
-                                var propertyInfo = ReflectionHelper.GetProperty(componentType, memberCurveClipData.PropertyName);
-                                if (propertyInfo == null)
-                                {
-                                    return;
-                                }
-                                var value = Evaluate(memberCurveClipData, time, propertyInfo.PropertyType);
-                                if (propertyInfo.PropertyType == value.GetType())
-                                {
-                                    propertyInfo.SetValue(component, value, null);
-                                }
-                                else
-                                {
-                                    Debug.LogErrorFormat("Actor={0},Component={1},Property={2},OriginType={3},TargetType={4}", actor.name, componentType, memberCurveClipData.PropertyName, propertyInfo.GetValueType(), value.GetType());
-                                }
-                            }
-                                return;
                         }
                     }
-                    {
-                        switch (memberCurveClipData.PropertyName)
-                        {
-                            case "color":
-                            {
-                                var l = actor.GetComponent<Yarp.YALight>();
-                                if (l == null)
-                                    return;
-                                l.color = EvaluateColor(memberCurveClipData, time);
-                            }
-                                return;
-                            case "intensity":
-                            {
-                                var l = actor.GetComponent<Yarp.YALight>();
-                                if (l == null)
-                                    return;
-                                l.intensity = EvaluateFloat(memberCurveClipData, time);
-                            }
-                                return;
-                            case "Intensity":
-                            {
-                                var l = actor.GetComponent<Yarp.EnvironmentLight>();
-                                if (l == null)
-                                    return;
-                                l.Intensity = EvaluateColor(memberCurveClipData, time);
-                            }
-                                return;
-                            default:
-                            {
-                                var component = actor.GetComponent(memberCurveClipData.Type);
-                                if (component == null)
-                                    return;
-                                var componentType = component.GetType();
-                                var fieldInfo = ReflectionHelper.GetField(componentType, memberCurveClipData.PropertyName);
-                                if (fieldInfo != null)
-                                {
-                                    fieldInfo.SetValue(component, Evaluate(memberCurveClipData, time, fieldInfo.FieldType));
-                                }
-                            }
-                                return;
-                        }
-                    }
-                });
+                }
             }
         }
 

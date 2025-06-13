@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Assets.Plugins.Common;
 using Sirenix.OdinInspector.Editor;
 using TimelineRuntime;
 using UnityEditor;
@@ -425,31 +424,22 @@ namespace TimelineEditor
             var missing = " is missing from Resources folder.";
 
             settingsImage = Resources.Load(SETTINGS_ICON + suffix) as Texture;
-            if (settingsImage == null)Log.LogD(LogTag.Timeline, SETTINGS_ICON + suffix + missing);
 
             rescaleImage = Resources.Load(HORIZONTAL_RESCALE_ICON + suffix) as Texture;
-            if (rescaleImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", HORIZONTAL_RESCALE_ICON, suffix, missing);
 
             zoomInImage = Resources.Load(ZOOMIN_ICON + suffix) as Texture;
-            if (zoomInImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", ZOOMIN_ICON, suffix, missing);
 
             zoomOutImage = Resources.Load(dir + ZOOMOUT_ICON + suffix + filetype_png) as Texture;
-            if (zoomOutImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", ZOOMOUT_ICON + suffix + missing);
 
             snapImage = Resources.Load(dir + MAGNET_ICON + suffix + filetype_png) as Texture;
-            if (snapImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", MAGNET_ICON, suffix, missing);
 
             rollingEditImage = Resources.Load(dir + "Director_RollingIcon" + filetype_png) as Texture;
-            if (rollingEditImage == null)Log.LogD(LogTag.Timeline, "Rolling edit icon missing from Resources folder.");
 
             rippleEditImage = Resources.Load(dir + "Director_RippleIcon" + filetype_png) as Texture;
-            if (rippleEditImage == null)Log.LogD(LogTag.Timeline, "Ripple edit icon missing from Resources folder.");
 
             pickerImage = Resources.Load(dir + PICKER_ICON + suffix + filetype_png) as Texture;
-            if (pickerImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", PICKER_ICON, suffix, missing);
 
             refreshImage = Resources.Load(dir + REFRESH_ICON + suffix + filetype_png) as Texture;
-            if (refreshImage == null)Log.LogD(LogTag.Timeline, "{0}{1}{2}", REFRESH_ICON, suffix, missing);
 
             titleImage = Resources.Load(dir + TITLE_ICON + suffix + filetype_png) as Texture;
 
@@ -524,7 +514,6 @@ namespace TimelineEditor
             if (m_Timeline == null)
                 return;
             var prefabInstanceRoot = m_Timeline.gameObject;
-            EditorUtil.RemoveMissingComponents(prefabInstanceRoot, true);
             if (!TimelineHelper.Check(prefabInstanceRoot))
             {
                 return;

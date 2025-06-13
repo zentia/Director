@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Plugins.Common;
 using TimelineRuntime;
 using UnityEditor;
 using UnityEngine;
@@ -310,15 +309,15 @@ namespace TimelineEditor
             if (playButton == null)
                 playButton = Resources.Load("Director_PlayIcon") as Texture;
             if (playButton == null)
-                Log.LogE(LogTag.Timeline, "Play button icon missing from Resources folder.");
+                Debug.LogError( "Play button icon missing from Resources folder.");
             if (pauseButton == null)
                 pauseButton = Resources.Load("Director_PauseIcon") as Texture;
             if (pauseButton == null)
-                Log.LogE(LogTag.Timeline, "Pause button missing from Resources folder.");
+                Debug.LogError( "Pause button missing from Resources folder.");
             if (stopButton == null)
                 stopButton = Resources.Load("Director_StopIcon") as Texture;
             if (stopButton == null)
-                Log.LogE(LogTag.Timeline, "Stop button icon missing from Resources folder.");
+                Debug.LogError( "Stop button icon missing from Resources folder.");
             if (frameForwardButton == null)
                 frameForwardButton = Resources.Load("Director_FrameForwardIcon") as Texture;
             if (frameBackwardButton == null)
@@ -326,11 +325,11 @@ namespace TimelineEditor
             if (scrubHead == null)
                 scrubHead = Resources.Load("Director_Playhead") as Texture;
             if (scrubHead == null)
-                Log.LogE(LogTag.Timeline, "Director_Playhead missing from Resources folder.");
+                Debug.LogError( "Director_Playhead missing from Resources folder.");
             if (scrubDurationHead == null)
                 scrubDurationHead = Resources.Load("Director_Duration_Playhead") as Texture;
             if (scrubDurationHead == null)
-                Log.LogE(LogTag.Timeline, "Director_Duration_Playhead missing from Resources folder.");
+                Debug.LogError( "Director_Duration_Playhead missing from Resources folder.");
             if (customSkin != null)
             {
                 TimelineControlStyles.BoxSelect = customSkin.FindStyle("BoxSelect");

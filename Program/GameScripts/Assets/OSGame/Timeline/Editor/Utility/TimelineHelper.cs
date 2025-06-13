@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Text;
-using Assets.Plugins.Common;
 using Object = UnityEngine.Object;
 
 namespace TimelineEditor
@@ -509,7 +508,7 @@ namespace TimelineEditor
 
                         if (count >= 100)
                         {
-                            Log.LogE(LogTag.UI, sb.ToString());
+                            Debug.LogError( sb.ToString());
                             count = 0;
                             sb.Clear();
                         }
@@ -521,7 +520,7 @@ namespace TimelineEditor
 
             if (sb.Length > 0)
             {
-                Log.LogE(LogTag.UI, sb.ToString());
+                Debug.LogError( sb.ToString());
             }
         }
 
@@ -609,7 +608,7 @@ namespace TimelineEditor
                 }
             }
 
-            Log.LogE(LogTag.UI, sb.ToString());
+            Debug.LogError( sb.ToString());
         }
 
         [MenuItem("Window/Timeline/抽取timeline中的相机配置")]

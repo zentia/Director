@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Assets.Plugins.Common;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -123,7 +122,7 @@ namespace TimelineRuntime
                     }
                     else
                     {
-                        Log.LogE(LogTag.Timeline, "Error while reverting: Could not find method \" {0}\" that accepts parameters {{1}}.", MemberInfo[0].Name, string.Join(", ", paramTypes.Select(v => v.ToString()).ToArray()));
+                        Debug.LogErrorFormat("Error while reverting: Could not find method \" {0}\" that accepts parameters {1}.", MemberInfo[0].Name, string.Join(", ", paramTypes.Select(v => v.ToString()).ToArray()));
                     }
                 }
             }

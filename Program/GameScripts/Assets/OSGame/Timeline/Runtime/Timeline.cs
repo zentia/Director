@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Plugins.Common;
-using ScreenFit;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace TimelineRuntime
 {
-    public delegate bool ClipDataSampleDelegate(MemberCurveClipData clipData, Transform actor, float time);
+    public delegate bool ClipDataSampleDelegate(MemberCurveClipData clipData, Transform actor, float time, Transform space);
+
+    public delegate Transform LoadAssetDelegate(string path);
+
+    public delegate void UnLoadAssetDelegate(Transform go);
+
+    public delegate GameObject FillCameraActor(ActorTrackGroup actorTrackGroup);
+
+    public delegate Camera GetMainCamera();
 
     [ExecuteInEditMode]
     public class Timeline : MonoBehaviour
@@ -43,6 +48,9 @@ namespace TimelineRuntime
         }
 
         public ClipDataSampleDelegate SampleDelegate;
+        public static LoadAssetDelegate LoadAsset;
+        public static UnLoadAssetDelegate UnLoad;
+        public static GetMainCamera OnGetMainCamera;
 
         [HideInInspector]
         public List<TrackGroup> trackGroups = new List<TrackGroup>();
@@ -53,12 +61,10 @@ namespace TimelineRuntime
         [SerializeField, HideInInspector]
         private MonoBehaviour[] m_RecoverableObjects;
 
-
-
 #if UNITY_EDITOR
         public void OnValidate()
         {
-            GetComponentsInChildren<TrackGroup>(true, trackGroups);
+            GetComponentsInChildren(true, trackGroups);
             actorTrackGroups = GetComponentsInChildren<ActorTrackGroup>(true);
             var recoverableObjects = GetComponentsInChildren<IRecoverableObject>(true);
             m_RecoverableObjects = new MonoBehaviour[recoverableObjects.Length];
@@ -92,21 +98,12 @@ namespace TimelineRuntime
             else if (state == TimelineState.Paused)
                 state = isPreview ? TimelineState.PreviewPlaying : TimelineState.Playing;
 
-            if (ScreenFitService.HasInstance())
-            {
-                var ac = actorTrackGroups.FirstOrDefault(o => o.gameObject.activeSelf && (o as ITrackScreenFitQuery)?.trackType == ScreenFitConfig.TimelineTrackType.Camera);
-                if (null != ac)
-                {
-                    Camera cam = ac.Actors?.FirstOrDefault()?.GetComponent<Camera>();
-                    if (null != cam)
-                    {
-                        var cameraFit = new TimelineAcCameraFit(this, ac.cameraCategory);
-                        int id = ScreenFitService.GetInstance().Register(cam, cameraFit);
-                        trackScreenFitIDs.Add(id);
-                    }
-                }
-            }
+            OnPlay?.Invoke(this);
         }
+
+        public static Action<Timeline> OnPlay;
+        public static Action<ActorTrackGroup> WhetherScreenFitActor;
+        public static FillCameraActor OnFillCameraActor;
 
         private void FreshPlay()
         {
@@ -156,16 +153,10 @@ namespace TimelineRuntime
             TimelineFinished?.Invoke(this, new TimelineEventArgs { isFinished = isFinished });
             hasBeenInitialized = false;
 
-            if (ScreenFitService.HasInstance())
-            {
-                foreach (var fitId in trackScreenFitIDs)
-                {
-                    ScreenFitService.GetInstance().UnRegister(fitId);
-                }
-                trackScreenFitIDs.Clear();
-            }
+            OnStop?.Invoke(this);
         }
 
+        public Action<Timeline> OnStop;
         public void UpdateTimeline(float deltaTime)
         {
             RunningTime += deltaTime * playbackSpeed;
@@ -308,11 +299,13 @@ namespace TimelineRuntime
             }
             gameObject.SetActive(true);
             var instanceID = GetInstanceID();
-            TimelineService.instance.ValidateAssetByInstanceId(instanceID);
+            OnValidateAssetByInstanceId?.Invoke(instanceID);
             Initialize();
             SetRunningTime(time);
             state = TimelineState.Paused;
         }
+
+        public static Action<int> OnValidateAssetByInstanceId;
 
         public void ExitPreviewMode()
         {
@@ -359,7 +352,7 @@ namespace TimelineRuntime
             SaveRevertData();
         }
 
-        private void SaveRevertData()
+        public void SaveRevertData()
         {
             revertCache.Clear();
             foreach (var child in m_RecoverableObjects)
@@ -379,7 +372,7 @@ namespace TimelineRuntime
             mRevertInfoDic.Clear();
         }
 
-        private void SaveRevertData(IRecoverableObject recoverable)
+        public void SaveRevertData(IRecoverableObject recoverable)
         {
             if (recoverable == null || recoverable.RuntimeRevertMode == RevertMode.Finalize)
             {
@@ -393,7 +386,7 @@ namespace TimelineRuntime
             }
         }
 
-        private void Revert(RevertInfo element)
+        public void Revert(RevertInfo element)
         {
             var behaviour = element.MonoBehaviour;
             if (behaviour == null)
@@ -465,82 +458,18 @@ namespace TimelineRuntime
         [NonSerialized]
         public bool hasBeenInitialized;
 
-        private List<RevertInfo> revertCache = new();
+        public List<RevertInfo> revertCache = new();
 
         public GameObject sceneRoot;
 #if UNITY_EDITOR
         [NonSerialized]
         public bool inGame;
 #endif
+        [NonSerialized]
+        public List<int> trackScreenFitIDs = new();
 
-        private List<int> trackScreenFitIDs = new();
+        public Dictionary<IRecoverableObject, RevertInfo[]> mRevertInfoDic = new();
 
-        private Dictionary<IRecoverableObject, RevertInfo[]> mRevertInfoDic = new();
-
-        public bool Fit(Camera camera, ScreenFitConfig.CameraCategory category)
-        {
-            var curAcIt = actorTrackGroups.Where(o => o.gameObject.activeSelf && o.trackType == ScreenFitConfig.TimelineTrackType.Camera);
-            if (!curAcIt.Any())
-                return false;
-
-            var acKey = ScreenFitConfig.GetTimelineSceneCameraTrackName(category);
-            foreach (var group in curAcIt)
-            {
-                if(group.name == acKey)
-                    return false;
-            }
-
-            var newAcIt = actorTrackGroups.Where(o => !o.gameObject.activeSelf && o.name == acKey && o.trackType == ScreenFitConfig.TimelineTrackType.Camera);
-            if (!newAcIt.Any())
-                return false;
-
-            foreach (var group in curAcIt)
-            {
-                group.Stop();
-
-                var recoverableObjects = group.GetComponentsInChildren<IRecoverableObject>(true);
-                foreach (var recoverable in recoverableObjects)
-                {
-                    if (mRevertInfoDic.TryGetValue(recoverable, out var ri))
-                    {
-                        foreach (var revertInfo in ri)
-                        {
-                            Revert(revertInfo);
-                            revertCache.Remove(revertInfo);
-                        }
-                        mRevertInfoDic.Remove(recoverable);
-                    }
-                }
-
-                group.gameObject.SetActive(false);
-            }
-
-            foreach (var group in newAcIt)
-            {
-                var cameraGo = group.Actors.FirstOrDefault(o => o.GetComponent<Camera>() != null);
-                if (null == cameraGo)
-                {
-                    group.Actors.Add(camera.transform);
-                }
-                else if (cameraGo.gameObject != camera.gameObject)
-                {
-                    Log.LogE(LogTag.Timeline,
-                        $"camera gameObject not match: {name}/{group.name}, {cameraGo.name}/{camera.name}");
-                }
-
-                group.Initialize();
-
-                var recoverableObjects = group.GetComponentsInChildren<IRecoverableObject>(true);
-                foreach (var recoverable in recoverableObjects)
-                {
-                    SaveRevertData(recoverable);
-                }
-
-                group.UpdateTrackGroup(RunningTime, 0);
-            }
-
-            return true;
-        }
     }
 
     public delegate void TimelineHandler(Timeline sender, TimelineEventArgs e);

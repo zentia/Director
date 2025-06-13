@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Assets.Plugins.Common;
 using UnityEngine;
 
 namespace TimelineRuntime
@@ -153,7 +152,7 @@ namespace TimelineRuntime
             }
             else
             {
-                Log.LogE(LogTag.Timeline,"Could not initialize curve curveClip, invalid initial values.");
+                Debug.LogError("Could not initialize curve curveClip, invalid initial values.");
             }
         }
 

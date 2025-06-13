@@ -1,30 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Framework.AssetService;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace TimelineRuntime
 {
-    public interface ITrackScreenFitQuery
-    {
-        ScreenFitConfig.TimelineTrackType trackType { get; }
-    }
-
     [TimelineTrackGroup("Actor Track Group", TimelineTrackGenre.ActorTrack)]
-    public class ActorTrackGroup : TrackGroup, ITrackScreenFitQuery
+    public class ActorTrackGroup : TrackGroup
     {
-        private static Dictionary<int, ScreenFitConfig.CameraCategory> s_CameraCategoryMap = new()
-        {
-            { (int)ScreenFitConfig.CameraCategory.Square, ScreenFitConfig.CameraCategory.Standard },
-            { (int)ScreenFitConfig.CameraCategory.Wide, ScreenFitConfig.CameraCategory.UltraWide },
-        };
 
         [ShowInInspector, OnValueChanged("OnActorChanged")]
         private List<Transform> m_Actors = new();
-        private InstantiatableAsset m_Asset;
-        private List<InstantiatableAsset> m_ItemAsset = new();
+        private Transform m_Asset;
+        private List<Transform> m_ItemAsset = new();
         [Asset, OnValueChanged("OnPathChanged")]
         public string path;
 
@@ -32,26 +21,23 @@ namespace TimelineRuntime
         public Vector3 localPosition;
         public Quaternion localRotation;
 
-        private ScreenFitConfig.TimelineTrackType mTrackType = ScreenFitConfig.TimelineTrackType.Default;
-
-        public ScreenFitConfig.TimelineTrackType trackType=> mTrackType;
-
-        public ScreenFitConfig.CameraCategory cameraCategory => GetCameraTypeByAspectRatio();
+        [NonSerialized]
+        public int trackType = 0;
 
 #if UNITY_EDITOR
         private void OnPathChanged()
         {
-            AssetService.instance.Unload(m_Asset);
+            Timeline.UnLoad(m_Asset);
             m_Asset = null;
             m_Actors.Clear();
 
             if (string.IsNullOrEmpty(path))
                 return;
 
-            m_Asset = AssetService.instance.LoadInstantiateAsset(path);
-            if (m_Asset != null && !m_Asset.Invalid())
+            m_Asset = Timeline.LoadAsset(path);
+            if (m_Asset != null)
             {
-                m_Actors.Add(m_Asset.Tf);
+                m_Actors.Add(m_Asset);
             }
             else
             {
@@ -63,7 +49,7 @@ namespace TimelineRuntime
         {
             if (m_Actors == null || m_Actors.Count == 0)
             {
-                AssetService.instance.Unload(m_Asset);
+                Timeline.UnLoad(m_Asset);
                 m_Asset = null;
             }
         }
@@ -78,42 +64,9 @@ namespace TimelineRuntime
             }
         }
 
-        private ScreenFitConfig.CameraCategory GetCameraTypeByAspectRatio()
-        {
-            return ScreenFitConfig.GetInstance().GetCameraCategory();
-        }
-
-        private void WhetherScreenFitActor()
-        {
-            mTrackType = ScreenFitConfig.TimelineTrackType.Default;
-            ScreenFitConfig.CameraCategory category = ScreenFitConfig.CameraCategory.UltraWide;
-
-            foreach (ScreenFitConfig.TimelineTrackType type in Enum.GetValues(typeof(ScreenFitConfig.TimelineTrackType)))
-            {
-                var ret = ScreenFitConfig.GetTimelineTrackNameDict(type);
-                if (null != ret)
-                {
-                    foreach (var kv in ret)
-                    {
-                        if (kv.Value == gameObject.name)
-                        {
-                            mTrackType = type;
-                            category = (ScreenFitConfig.CameraCategory)kv.Key;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if(mTrackType == ScreenFitConfig.TimelineTrackType.Default)
-                return;
-
-            gameObject.SetActive(category == cameraCategory);
-        }
-
         public override void Initialize()
         {
-            WhetherScreenFitActor();
+            Timeline.WhetherScreenFitActor?.Invoke(this);
             if (!gameObject.activeSelf)
             {
                 return;
@@ -130,8 +83,8 @@ namespace TimelineRuntime
             Actors.Clear();
             if (!string.IsNullOrEmpty(path))
             {
-                m_Asset = AssetService.instance.LoadInstantiateAsset(path, LifeType.GameState);
-                if (!m_Asset.Valid())
+                m_Asset = Timeline.LoadAsset(path);
+                if (!m_Asset)
                 {
                     PostInitialize();
                     return;
@@ -140,37 +93,24 @@ namespace TimelineRuntime
                 {
                     if (string.IsNullOrEmpty(parentName))
                     {
-                        m_Asset.Tf.SetParent(timeline.sceneRoot.transform);
+                        m_Asset.SetParent(timeline.sceneRoot.transform);
                     }
                     else
                     {
-                        var parent = timeline.sceneRoot.FindChildBFS(parentName);
-                        m_Asset.Tf.SetParent(parent != null ? parent.transform : timeline.sceneRoot.transform);
+                        var parent = TimelineRuntimeHelper.FindChildBFS(timeline.sceneRoot,parentName);
+                        m_Asset.SetParent(parent != null ? parent.transform : timeline.sceneRoot.transform);
                     }
                 }
-                Actors.Add(m_Asset.RootTf);
+                Actors.Add(m_Asset);
                 Actors[0].localPosition = localPosition;
                 Actors[0].localRotation = localRotation;
             }
             else if (timeline.sceneRoot != null)
             {
-                var go = timeline.sceneRoot.FindChildBFS(name);
+                var go = TimelineRuntimeHelper.FindChildBFS(timeline.sceneRoot,name);
                 if (go == null)
                 {
-                    // TODO
-                    // 这里是个trick的做法：如果是作用于棋盘的timeline，sceneRoot业务侧传入的是美术场景的根节点，但如果美术场景里没有新增的相机节点，逻辑就会失效，所以这里只是为了不让逻辑被跳过
-                    foreach (var kv in ScreenFitConfig.GetTimelineTrackNameDict(ScreenFitConfig.TimelineTrackType.Camera))
-                    {
-                        if (kv.Value == gameObject.name)
-                        {
-                            if (s_CameraCategoryMap.TryGetValue(kv.Key, out var rawCameraType))
-                            {
-                                var rawName = ScreenFitConfig.GetTimelineSceneCameraTrackName(rawCameraType);
-                                go = timeline.sceneRoot.FindChildBFS(rawName);
-                            }
-                            break;
-                        }
-                    }
+                    go = Timeline.OnFillCameraActor?.Invoke(this);
 
                     if (go == null)
                     {
@@ -181,7 +121,7 @@ namespace TimelineRuntime
                 var cam = go.GetComponent<Camera>();
                 if (cam != null)
                 {
-                    cam = CameraSystem.instance.mainCamera;
+                    cam = Timeline.OnGetMainCamera?.Invoke();
                     Actors.Add(cam.transform);
                 }
                 else
@@ -207,38 +147,35 @@ namespace TimelineRuntime
         public override void Stop()
         {
             base.Stop();
-            if (m_Asset != null && m_Asset.Tf != null)
+            if (m_Asset != null)
             {
-                m_Actors.Remove(m_Asset.Tf);
+                m_Actors.Remove(m_Asset);
+                Timeline.UnLoad(m_Asset);
             }
 
-            if (m_Asset != null && m_Asset.Valid())
-            {
-                AssetService.instance.Unload(m_Asset);
-            }
         }
 
-        public InstantiatableAsset LoadInstantiatableAsset(string assetName)
+        public Transform LoadInstantiatableAsset(string assetName)
         {
             if (string.IsNullOrEmpty(assetName))
             {
                 return null;
             }
-            var asset = AssetService.instance.LoadInstantiateAsset(assetName);
-            if (asset == null || asset.Invalid())
+            var asset = Timeline.LoadAsset(assetName);
+            if (asset == null)
                 return null;
             m_ItemAsset.Add(asset);
             return asset;
         }
 
-        public void UnloadInstantiatableAsset(ref InstantiatableAsset asset)
+        public void UnloadInstantiatableAsset(ref Transform asset)
         {
             if (!m_ItemAsset.Contains(asset))
             {
                 return;
             }
             m_ItemAsset.Remove(asset);
-            AssetService.instance.Unload(asset);
+            Timeline.UnLoad(asset);
             asset = null;
         }
 
@@ -246,7 +183,7 @@ namespace TimelineRuntime
         {
             var renderers = new List<Renderer>();
             m_Actors.ForEach(o => renderers.AddRange(o.GetComponentsInChildren<Renderer>()));
-            m_ItemAsset.ForEach(o=>renderers.AddRange(o.Go.GetComponentsInChildren<Renderer>()));
+            m_ItemAsset.ForEach(o=>renderers.AddRange(o.GetComponentsInChildren<Renderer>()));
             return renderers;
         }
     }

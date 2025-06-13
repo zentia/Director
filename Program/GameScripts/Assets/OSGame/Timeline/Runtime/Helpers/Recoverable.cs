@@ -1,6 +1,6 @@
 ﻿namespace TimelineRuntime
 {
-    internal interface IRecoverableObject
+    public interface IRecoverableObject
     {
         RevertMode RuntimeRevertMode { get; set; }
 

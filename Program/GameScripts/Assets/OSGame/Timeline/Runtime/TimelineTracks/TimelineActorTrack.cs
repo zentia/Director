@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Assets.Plugins.Common;
 using UnityEngine;
 
 namespace TimelineRuntime
@@ -76,7 +75,7 @@ namespace TimelineRuntime
                 var atg = trackGroup as ActorTrackGroup;
                 if (atg == null)
                 {
-                    Log.LogE(LogTag.Timeline, "No ActorTrackGroup found on parent.");
+                    Debug.LogError("No ActorTrackGroup found on parent.");
                     return null;
                 }
                 if (atg.Actors != null && atg.Actors.Count > 0)

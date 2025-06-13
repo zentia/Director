@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Assets.Plugins.Common;
 using UnityEngine;
 
 namespace TimelineRuntime
@@ -125,7 +124,7 @@ namespace TimelineRuntime
                 }
                 catch (ReflectionTypeLoadException e)
                 {
-                    Log.LogE(LogTag.Timeline, "Could not load types from assembly \"{0}\"\n{1}\n{2}" + assemblies[i], e.Message, e.StackTrace);
+                    Debug.LogErrorFormat("Could not load types from assembly \"{0}\"\n{1}\n{2}", assemblies[i], e.Message, e.StackTrace);
                     continue;
                 }
 
@@ -197,5 +196,36 @@ namespace TimelineRuntime
         private static Dictionary<Type, TimelineTrackGroupAttribute[]> s_TimelineTrackGroups = new();
         private static Dictionary<Type, TimelineTrackAttribute[]> s_TimelineTracks = new();
         private static Dictionary<Type, TimelineItemAttribute[]> s_TimelineItems = new();
+        public static GameObject FindChildBFS(GameObject gameObj, string name, bool onlyFindActive = false)
+        {
+            if (gameObj == null)
+                return null;
+
+            List<GameObject> BfsList = new List<GameObject>();
+            BfsList.Add(gameObj);
+
+            GameObject objFound = null;
+            int index = 0;
+            while (index < BfsList.Count)
+            {
+                var go = BfsList[index++];
+
+                if (go.name == name && (!onlyFindActive || go.activeInHierarchy))
+                {
+                    objFound = go;
+                    break;
+                }
+
+                int childCount = go.transform.childCount;
+                for (int i = 0; i < childCount; ++i)
+                {
+                    var child = go.transform.GetChild(i).gameObject;
+                    BfsList.Add(child);
+                }
+            }
+
+            BfsList.Clear();
+            return objFound;
+        }
     }
 }

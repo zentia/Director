@@ -1,4 +1,3 @@
-using Assets.Plugins.Common;
 using UnityEngine;
 
 namespace TimelineRuntime
@@ -14,7 +13,7 @@ namespace TimelineRuntime
             var actor = Actor;
             if (actor == null)
             {
-                Log.LogE(LogTag.Timeline, "Actor is null");
+                Debug.LogError( "Actor is null");
                 return;
             }
 
