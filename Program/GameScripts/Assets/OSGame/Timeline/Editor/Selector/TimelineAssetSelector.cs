@@ -25,11 +25,11 @@ namespace TimelineEditor
 
         protected override void BuildSelectionTree(OdinMenuTree tree)
         {
-            m_PathList.ForEach(p =>
+            foreach (var p in m_PathList)
             {
                 var path = Path.Combine(Root, p);
                 var assets = AssetDatabase.FindAssets("t:Prefab", new[] { path });
-                assets.ForEach(guid =>
+                foreach (var guid in assets)
                 {
                     var file = AssetDatabase.GUIDToAssetPath(guid);
                     var asset = AssetDatabase.LoadAssetAtPath<GameObject>(file);
@@ -37,8 +37,9 @@ namespace TimelineEditor
                     {
                         tree.Add(file.Substring(path.Length + 1, file.Length - 7 - path.Length - 1).Replace("\\", "/"), file);
                     }
-                });
-            });
+                }
+            }
+
         }
     }
 }

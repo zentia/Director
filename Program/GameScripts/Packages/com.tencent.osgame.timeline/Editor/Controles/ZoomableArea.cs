@@ -174,7 +174,7 @@ namespace TimelineEditor
             GUILayout.BeginArea(drawRect);
             if (handleUserInteraction)
             {
-                var controlID = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Passive, drawArea);
+                var controlID = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Native, drawArea);
                 switch (Event.current.GetTypeForControl(controlID))
                 {
                     case EventType.MouseDown:

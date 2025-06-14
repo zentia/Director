@@ -398,11 +398,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ordinal: -1
   trackGroup: {fileID: 8524244953447582524}
-  timelineItems:
-  - {fileID: 2049072682}
+  timelineItems: []
   timelineActions: []
-  m_CacheActorEvents:
-  - {fileID: 2049072682}
+  m_CacheActorEvents: []
 --- !u!1 &1581450990
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,7 +462,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1625470053}
   - component: {fileID: 1625470052}
-  - component: {fileID: 1625470051}
   m_Layer: 0
   m_Name: YarpCamera
   m_TagString: Untagged
@@ -472,22 +469,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1625470051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1625470050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e7db1d235e11f549a8e203bd1f43697, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Renderer: 4
-  OffScreenRenderTarget: {fileID: 0}
-  OutputAlpha: 0
-  ClearDepthBg: 1
 --- !u!20 &1625470052
 Camera:
   m_ObjectHideFlags: 0

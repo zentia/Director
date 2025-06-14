@@ -36,7 +36,11 @@ namespace TimelineEditor
 
             protected override void BuildSelectionTree(OdinMenuTree tree)
             {
-                SceneManager.GetActiveScene().GetRootGameObjects().ForEach(e => tree.Add(e.name, e.transform));
+                var rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+                foreach (var rootGameObject in rootGameObjects)
+                {
+                    tree.Add(rootGameObject.name, rootGameObject.transform);
+                }
             }
         }
 

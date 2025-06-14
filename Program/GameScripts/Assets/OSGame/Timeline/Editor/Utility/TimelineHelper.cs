@@ -400,22 +400,22 @@ namespace TimelineEditor
         [MenuItem("Window/Timeline/CheckAll")]
         public static void CheckAll()
         {
-            RootDirList.ForEach(rootDir =>
+            foreach (var rootDir in RootDirList)
             {
                 var assets = AssetDatabase.FindAssets("t:Prefab", new [] { "Assets/CustomResources/" + rootDir });
-                assets.ForEach(guid=>
+                foreach (var guid in assets)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
                     Check(AssetDatabase.LoadAssetAtPath<GameObject>(path), path);
-                });
-            });
+                }
+            }
         }
 
         [MenuItem("Window/Timeline/CheckAllIllegalDir")]
         public static void CheckIllegalDir()
         {
             var assets = AssetDatabase.FindAssets("t:Prefab", IllegalDirList);
-            assets.ForEach(guid =>
+            foreach (var guid in assets)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var asset = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -423,302 +423,35 @@ namespace TimelineEditor
                 {
                     Error("该目录不能存放Timeline", path);
                 }
-            });
+            }
         }
 
         [MenuItem("Window/Timeline/Refresh")]
         public static void RefreshTimeline()
         {
-            RootDirList.ForEach(rootDir =>
+            foreach (var rootDir in RootDirList)
             {
                 var assets = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/CustomResources/" + rootDir });
-                assets.ForEach(guid =>
+                foreach (var guid in assets)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
                     Refresh(AssetDatabase.LoadAssetAtPath<GameObject>(path), path);
-                });
-            });
+                }
+            }
             AssetDatabase.SaveAssets();
         }
 
         [MenuItem("Window/Timeline/Convert")]
         public static void Convert()
         {
-            RootDirList.ForEach(rootDir =>
+            foreach (var rootDir in RootDirList)
             {
                 var assets = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/CustomResources/" + rootDir });
-                assets.ForEach(guid =>
+                foreach (var guid in assets)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
                     Convert(AssetDatabase.LoadAssetAtPath<GameObject>(path), path);
-                });
-            });
-        }
-
-
-        [MenuItem("Window/Timeline/GenCameraAllOtherAC")]
-        public static void GenCameraAllOtherAC()
-        {
-            StringBuilder sb = new StringBuilder();
-            int count = 0;
-
-            ScreenFitConfig.CameraCategory baseType = ScreenFitConfig.CameraCategory.UltraWide;
-
-            TimelineCameraAC.CameraGenerateAssist assist =
-                new TimelineCameraAC.CameraGenerateAssist(baseType);
-
-            RootDirList.ForEach(rootDir =>
-            {
-                var assets = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/CustomResources/" + rootDir });
-                assets.ForEach(guid =>
-                {
-                    var path = AssetDatabase.GUIDToAssetPath(guid);
-                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                    GameObject prefabInstanceGo = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-
-                    var timeline = prefabInstanceGo.GetComponent<Timeline>();
-                    // 同时有2:1和16:9 cameraAC的认为是需要根据屏幕宽高比进行制作的
-                    if (assist.HasCameraAC(timeline, assist.baseCameraAC) // 2:1
-                        && assist.HasCameraAC(timeline,
-                            ScreenFitConfig.GetTimelineSceneCameraTrackName(ScreenFitConfig.CameraCategory.Standard)) // 16:9
-                       )
-                    {
-                        int ret = 0;
-
-                        // 生成剩下两类的
-                        var wide = assist.GenCameraByType(timeline, ScreenFitConfig.CameraCategory.Wide);
-                        var square = assist.GenCameraByType(timeline, ScreenFitConfig.CameraCategory.Square);
-                        if (wide || square)
-                        {
-                            if (
-                                // !TimelineHelper.Check(prefabInstanceGo) ||
-                                !PrefabUtility.HasPrefabInstanceAnyOverrides(prefabInstanceGo,false))
-                            {
-                                ret = -1;
-                            }
-                            else
-                            {
-                                PrefabUtility.ApplyPrefabInstance(prefabInstanceGo, InteractionMode.UserAction);
-                                ret = 1;
-                            }
-                        }
-
-                        count++;
-                        sb.AppendLine($"{path}, wide:{wide}, square:{square}, {ret}");
-
-                        if (count >= 100)
-                        {
-                            Debug.LogError( sb.ToString());
-                            count = 0;
-                            sb.Clear();
-                        }
-                    }
-
-                    GameObject.DestroyImmediate(prefabInstanceGo);
-                });
-            });
-
-            if (sb.Length > 0)
-            {
-                Debug.LogError( sb.ToString());
-            }
-        }
-
-        [MenuItem("Window/Timeline/修正相机轨道末尾帧")]
-        public static void AlignCameraACLastKeyFrame()
-        {
-            bool genOtherCameras = false;
-
-            Dictionary<string, Func<IEnumerable<string>>> cameraType2TimelineList = new();
-
-            IEnumerable<string> IngamePreBeginAge()
-            {
-                for (int i = 0; i < PBData.PBDataManager.ResSceneCfg.Count(); i++)
-                {
-                    var config = PBData.PBDataManager.ResSceneCfg.GetAt((uint)i);
-                    if (string.IsNullOrEmpty(config.IngamePreBeginAGE))
-                        continue;
-
-                    yield return config.IngamePreBeginAGE;
                 }
-            }
-
-            cameraType2TimelineList.Add(TimelineCameraAC.CameraTypeBattle, IngamePreBeginAge);
-
-            StringBuilder sb = new StringBuilder();
-            TimelineCameraAC.CameraGenerateAssist assist = new TimelineCameraAC.CameraGenerateAssist();
-
-            foreach (var kv in cameraType2TimelineList)
-            {
-                var cameraType = kv.Key;
-                assist.cameraType = cameraType;
-                foreach (var rawPath in kv.Value())
-                {
-                    var path = rawPath.Replace(".xml", "");
-                    path = $"Assets/CustomResources/{path}.prefab";
-
-                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                    if(null == prefab)
-                        continue;
-
-                    GameObject prefabInstanceGo = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-
-                    int ret = 0;
-                    var timeline = prefabInstanceGo.GetComponent<Timeline>();
-
-                    // bool bRet = true;
-                    // foreach (var category in Enum.GetValues(typeof(ScreenFitConfig.CameraCategory)))
-                    // {
-                    //     if(!assist.AlignLastKeyFrameValue(timeline, cameraType, (ScreenFitConfig.CameraCategory)category))
-                    //     {
-                    //         bRet = false;
-                    //         break;
-                    //     }
-                    // }
-                    // if (bRet)
-                    if (assist.AlignLastKeyFrameValue(timeline, cameraType, ScreenFitConfig.CameraCategory.UltraWide))
-                    {
-                        if (genOtherCameras)
-                        {
-                            var wide = assist.GenCameraByType(timeline, ScreenFitConfig.CameraCategory.Wide);
-                            var standard = assist.GenCameraByType(timeline, ScreenFitConfig.CameraCategory.Standard);
-                            var square = assist.GenCameraByType(timeline, ScreenFitConfig.CameraCategory.Square);
-
-                            if (
-                                // !TimelineHelper.Check(prefabInstanceGo) ||
-                                !PrefabUtility.HasPrefabInstanceAnyOverrides(prefabInstanceGo,false))
-                            {
-                                ret = -1;
-                            }
-                            else
-                            {
-                                PrefabUtility.ApplyPrefabInstance(prefabInstanceGo, InteractionMode.UserAction);
-                                ret = 1;
-                            }
-                        }
-                        else
-                        {
-                            PrefabUtility.ApplyPrefabInstance(prefabInstanceGo, InteractionMode.UserAction);
-                            ret = 1;
-                        }
-                    }
-                    sb.AppendLine($"{rawPath}, {ret}");
-
-                    GameObject.DestroyImmediate(prefabInstanceGo);
-                }
-            }
-
-            Debug.LogError( sb.ToString());
-        }
-
-        [MenuItem("Window/Timeline/抽取timeline中的相机配置")]
-        public static void Timeline2Config()
-        {
-            Dictionary<string, string> config2timeline = new()
-            {
-                {"Camera_ChooseLord", "GamePlay/project8/Prefab_Characters/Prefab_Common/Scenes_Camera/Camera_ChooseLord"},
-                {"Camera_ChooseLord_in", "GamePlay/project8/Prefab_Characters/Prefab_Common/Scenes_Camera/Camera_ChooseLord_in"},
-                {"Camera_ChooseLord_Out", "GamePlay/project8/Prefab_Characters/Prefab_Common/Scenes_Camera/Camera_ChooseLord_Out"},
-                {"Camera_ChooseLord_End", "GamePlay/project8/Prefab_Characters/Prefab_Common/Scenes_Camera/Camera_ChooseLord_End"},
-                {"Camera_ChooseLord_Xinshou", "GamePlay/project8/Prefab_Characters/Prefab_Common/Scenes_Camera/Camera_ChooseLord_Xinshou"},
-            };
-
-            List<GameObject> CollectGoList(Timeline timeline, string name)
-            {
-                List<GameObject> goList = new List<GameObject>();
-                if (null != timeline)
-                {
-                    for (int i = 0, childCount = timeline.transform.childCount; i < childCount; i++)
-                    {
-                        var child = timeline.transform.GetChild(i);
-                        if (null != child && child.name == name)
-                        {
-                            goList.Add(child.gameObject);
-                        }
-                    }
-                }
-
-                return goList;
-            }
-
-            TimelineCameraParam CollectParam(Timeline timeline, ScreenFitConfig.CameraCategory category)
-            {
-                List<Tuple<float, Vector3>> posList = new();
-                List<Tuple<float, Vector3>> rotList = new();
-                List<Tuple<float, float>> fovList = new();
-
-                var acKey = ScreenFitConfig.GetTimelineSceneCameraTrackName(category);
-                var goList = CollectGoList(timeline, acKey);
-                foreach (var go in goList)
-                {
-                    var curveClipList = go.GetComponentsInChildren<TimelineActorCurveClip>(true);
-                    foreach (var curveClip in curveClipList)
-                    {
-                        foreach (var curveData in curveClip.CurveData)
-                        {
-                            if (curveData.IsProperty)
-                            {
-                                switch (curveData.PropertyName)
-                                {
-                                    case "localPosition":
-                                        posList.Add(new Tuple<float, Vector3>(curveClip.EndTime,
-                                            TimelineCurveClip.EvaluateVector3(curveData, curveClip.EndTime)));
-                                        break;
-                                    case "localEulerAngles":
-                                        rotList.Add(new Tuple<float, Vector3>(curveClip.EndTime,
-                                            TimelineCurveClip.EvaluateVector3(curveData, curveClip.EndTime)));
-                                        break;
-                                    case "localRotation":
-                                        rotList.Add(new Tuple<float, Vector3>(curveClip.EndTime,
-                                            TimelineCurveClip.EvaluateQuaternion(curveData, curveClip.EndTime).eulerAngles));
-                                        break;
-                                    case "fieldOfView":
-                                        fovList.Add(new Tuple<float, float>(curveClip.EndTime, curveData.Curve1.Evaluate(curveClip.EndTime)));
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-                posList.Sort((a, b) => a.Item1.CompareTo(b.Item1));
-                rotList.Sort((a, b) => a.Item1.CompareTo(b.Item1));
-                fovList.Sort((a, b) => a.Item1.CompareTo(b.Item1));
-
-                TimelineCameraParam param = new TimelineCameraParam();
-                if (posList.Count > 0 && rotList.Count > 0 && fovList.Count > 0)
-                {
-                    param.position = posList[0].Item2;
-                    param.rotation = rotList[0].Item2;
-                    param.fov = fovList[0].Item2;
-                }
-
-                return param;
-            }
-
-            void Timeline2Config(string configType, string path)
-            {
-                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                if(null == prefab)
-                    return;
-
-                var timeline = prefab.GetComponent<Timeline>();
-
-                TimelineCameraConfigData configData = new TimelineCameraConfigData()
-                {
-                    type = configType,
-                    ultraWideParam = CollectParam(timeline, ScreenFitConfig.CameraCategory.UltraWide),
-                    wideParam = CollectParam(timeline, ScreenFitConfig.CameraCategory.Wide),
-                    standardParam = CollectParam(timeline, ScreenFitConfig.CameraCategory.Standard),
-                    squareParam = CollectParam(timeline, ScreenFitConfig.CameraCategory.Square),
-                };
-                TimelineCameraConfig.GetInstance().SetConfigData(configData);
-            }
-
-            foreach (var kv in config2timeline)
-            {
-                var configType = kv.Key;
-                var path = $"Assets/CustomResources/{config2timeline[configType]}.prefab";
-                Timeline2Config(configType, path);
             }
         }
 
@@ -741,7 +474,10 @@ namespace TimelineEditor
         private static void Refresh(GameObject timeline, string path)
         {
             var items = timeline.GetComponentsInChildren<TimelineItem>(true);
-            items.ForEach(i=>i.Refresh());
+            foreach (var timelineItem in items)
+            {
+                timelineItem.Refresh();
+            }
             EditorUtility.SetDirty(timeline);
         }
 
@@ -825,37 +561,7 @@ namespace TimelineEditor
             return true;
         }
 
-        public static void Save(GameObject go)
-        {
-            var timeline = go.GetComponent<Timeline>();
-            if (timeline == null)
-                return;
-            var transform = timeline.transform;
-            OSGamePrefabUtility.DestroyComponents(transform.gameObject, typeof(Timeline));
-            for (var i = 0; i < transform.childCount; i++)
-            {
-                var group = transform.GetChild(i);
-                OSGamePrefabUtility.DestroyComponents(group.gameObject, typeof(TrackGroup));
-                for (var j = 0; j < group.childCount; j++)
-                {
-                    var track = group.GetChild(j);
-                    OSGamePrefabUtility.DestroyComponents(track.gameObject, typeof(TimelineTrack));
-                    var components = track.GetComponents<Component>();
-                    if (components.Length <= 1)
-                    {
-                        Object.DestroyImmediate(track.gameObject);
-                    }
-                    else
-                    {
-                        for (var k = 0; k < track.childCount; k++)
-                        {
-                            var item = track.GetChild(k);
-                            OSGamePrefabUtility.DestroyComponents(item.gameObject, typeof(TimelineItem));
-                        }
-                    }
-                }
-            }
-        }
+
 
         public static readonly string[] RootDirList =
         {

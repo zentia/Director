@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector.Editor;
 using TimelineRuntime;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace TimelineEditor
 {
@@ -19,7 +20,11 @@ namespace TimelineEditor
 
         protected override void BuildSelectionTree(OdinMenuTree tree)
         {
-            GameObject.FindObjectsOfType<Timeline>(true).ForEach(i=>tree.Add(i.name,i));
+            var objects = Object.FindObjectsOfType<Timeline>(true);
+            foreach (var timeline in objects)
+            {
+                tree.Add(timeline.name, timeline);
+            }
         }
     }
 }

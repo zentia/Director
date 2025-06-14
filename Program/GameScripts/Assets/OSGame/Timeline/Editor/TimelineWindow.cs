@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 
 namespace TimelineEditor
 {
+    public delegate void OnDraw(ref Rect rect);
+
+    public delegate bool IsCamera(string name);
     public class TimelineWindow : EditorWindow
     {
         private const string TITLE = "Timeline";
@@ -48,15 +51,16 @@ namespace TimelineEditor
         private uint m_FrameCount;
 
         public Timeline timeline => m_Timeline;
-        private TimelineCameraAC m_CameraAC;
-
+        public static Action<TimelineWindow> OnAwake;
+        public static OnDraw OnDraw;
+        public static IsCamera IsCamera;
         public void Awake()
         {
             titleContent = new GUIContent(TITLE, titleImage);
             minSize = new Vector2(600f, 400f);
             LoadTextures();
 
-            m_CameraAC = new TimelineCameraAC(this);
+            OnAwake?.Invoke(this);
         }
 
         protected void OnEnable()
@@ -269,7 +273,7 @@ namespace TimelineEditor
                     continue;
                 foreach (var actorTrackGroup in actorTrackGroups)
                 {
-                    var child = rootGameObject.FindChildBFS(actorTrackGroup.name);
+                    var child = TimelineRuntimeHelper.FindChildBFS(rootGameObject,actorTrackGroup.name);
                     if (child == null)
                     {
                         // if (actorTrackGroup.name is "Camera" or "Camera_AC" or "Camera_AC_IPad")
@@ -297,14 +301,10 @@ namespace TimelineEditor
             if (name == "Camera")
                 return true;
 
-            foreach (var kv in ScreenFitConfig.GetTimelineTrackNameDict(ScreenFitConfig.TimelineTrackType.Camera))
+            if (IsCamera!=null)
             {
-                if (kv.Value == name)
-                {
-                    return true;
-                }
+                return IsCamera(name);
             }
-
             return false;
         }
 
@@ -390,19 +390,10 @@ namespace TimelineEditor
             {
                 Expanded(false);
             }
-
-            try
-            {
-                m_CameraAC?.Draw(ref area);
-            }
-            catch (Exception e)
-            {
-                UnityEngine.Debug.LogException(e);
-                throw;
-            }
-
+            OnDraw?.Invoke(ref area);
             EditorGUILayout.EndHorizontal();
         }
+
 
         private void ChooseResizeOption(object userData)
         {
@@ -487,9 +478,9 @@ namespace TimelineEditor
         {
             var timelineItemName = TimelineHelper.GetTimelineItemName("Timeline", typeof(Timeline));
             var timelineGo = new GameObject(timelineItemName);
-            SelectTimeline(timelineGo.GetOrAddComponent<Timeline>());
+            SelectTimeline(timelineGo.AddComponent<Timeline>());
         }
-
+        public static Action OnSelectTimeline;
         private void SelectTimeline(Timeline timeline)
         {
             if (timeline == null)
@@ -501,7 +492,7 @@ namespace TimelineEditor
             _control.InPreviewMode = false;
             _control.Rescale();
             Selection.activeObject = timeline.gameObject;
-            m_CameraAC?.Reset();
+            OnSelectTimeline?.Invoke();
         }
 
         private void OnStopTimeline(Timeline sender, TimelineEventArgs e)
