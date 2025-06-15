@@ -568,26 +568,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Timeline
       objectReference: {fileID: 0}
-    - target: {fileID: 1743787922002586968, guid: 191573e2c0ad5b84cb90e3b01fdb2dba,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6628778286000711353, guid: 191573e2c0ad5b84cb90e3b01fdb2dba,
-        type: 3}
-      propertyPath: duration
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6628778286000711353, guid: 191573e2c0ad5b84cb90e3b01fdb2dba,
-        type: 3}
-      propertyPath: m_RecoverableObjects.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6628778286000711353, guid: 191573e2c0ad5b84cb90e3b01fdb2dba,
-        type: 3}
-      propertyPath: m_RecoverableObjects.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 7952729591089773380, guid: 191573e2c0ad5b84cb90e3b01fdb2dba,
         type: 3}
       propertyPath: m_LocalPosition.x
