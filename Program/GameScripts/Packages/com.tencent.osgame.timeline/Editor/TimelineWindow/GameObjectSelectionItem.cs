@@ -1,4 +1,5 @@
 using System;
+using TimelineRuntime;
 using UnityEngine;
 using UnityEditor;
 
@@ -11,17 +12,17 @@ namespace TimelineEditorInternal
             GameObjectSelectionItem selectionItem = CreateInstance(typeof(GameObjectSelectionItem)) as GameObjectSelectionItem;
 
             selectionItem.gameObject = gameObject;
-            selectionItem.animationClip = null;
+            selectionItem.timeline = null;
             selectionItem.id = 0; // no need for id since there's only one item in selection.
 
             if (selectionItem.rootGameObject != null)
             {
-                AnimationClip[] allClips = AnimationUtility.GetAnimationClips(selectionItem.rootGameObject);
+                var timeline = selectionItem.rootGameObject.GetComponent<Timeline>();
 
-                if (selectionItem.animationClip == null && selectionItem.gameObject != null) // there is activeGO but clip is still null
-                    selectionItem.animationClip = allClips.Length > 0 ? allClips[0] : null;
-                else if (!Array.Exists(allClips, x => x == selectionItem.animationClip))  // clip doesn't belong to the currently active GO
-                    selectionItem.animationClip = allClips.Length > 0 ? allClips[0] : null;
+                if (selectionItem.timeline == null && selectionItem.gameObject != null) // there is activeGO but clip is still null
+                    selectionItem.timeline = timeline;
+                else if (timeline != selectionItem.timeline)  // clip doesn't belong to the currently active GO
+                    selectionItem.timeline = timeline;
             }
 
             return selectionItem;
@@ -39,6 +40,18 @@ namespace TimelineEditorInternal
                     return null;
 
                 return base.animationClip;
+            }
+        }
+
+        public override Timeline timeline
+        {
+            get
+            {
+                return animationPlayer as Timeline;
+            }
+            set
+            {
+                base.timeline = value;
             }
         }
 

@@ -23,12 +23,12 @@ namespace TimelineEditor
         public static GUIContent noAnimatableObjectSelectedText = EditorGUIUtility.TrTextContent("No animatable object selected.");
         public static GUIContent formatIsMissing = EditorGUIUtility.TrTextContent("To begin animating {0}, create {1}.");
         public static GUIContent animatorAndAnimationClip = EditorGUIUtility.TrTextContent("an Animator and an Animation Clip");
-        public static GUIContent animationClip = EditorGUIUtility.TrTextContent("an Animation Clip");
+        public static GUIContent animationClip = EditorGUIUtility.TrTextContent("an Timeline");
         public static GUIContent create = EditorGUIUtility.TrTextContent("Create");
         public static GUIContent dopesheet = EditorGUIUtility.TrTextContent("Dopesheet");
         public static GUIContent curves = EditorGUIUtility.TrTextContent("Curves");
         public static GUIContent samples = EditorGUIUtility.TrTextContent("Samples");
-        public static GUIContent createNewClip = EditorGUIUtility.TrTextContent("Create New Clip...");
+        public static GUIContent createNewClip = EditorGUIUtility.TrTextContent("Create New Timeline...");
 
         public static GUIContent animatorOptimizedText = EditorGUIUtility.TrTextContent("Editing and playback of animations on optimized game object hierarchy is not supported.\nPlease select a game object that does not have 'Optimize Game Objects' applied.");
         public static GUIContent readOnlyPropertiesLabel = EditorGUIUtility.TrTextContent("Animation Clip is Read-Only");

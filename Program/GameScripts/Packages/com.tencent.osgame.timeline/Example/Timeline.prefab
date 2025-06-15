@@ -9,14 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7952729591089773380}
-  - component: {fileID: 6628778286000711353}
+  - component: {fileID: 5261658512353734272}
   m_Layer: 0
   m_Name: Timeline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7952729591089773380
 Transform:
   m_ObjectHideFlags: 0
@@ -30,10 +30,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4030084923294896952}
+  - {fileID: 1860019427495639431}
+  - {fileID: 389278993613470804}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6628778286000711353
+--- !u!114 &5261658512353734272
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,19 +43,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1743787922002586968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 174455906, guid: 603043be3babbf44188404cd589ac0c7, type: 3}
+  m_Script: {fileID: 11500000, guid: 56a5ecd1422495b4d90ae2d4873ef9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   trackGroups:
-  - {fileID: 7035850707085789703}
+  - {fileID: 8504555003598468025}
+  - {fileID: 4445323645349394716}
   actorTrackGroups:
-  - {fileID: 7035850707085789703}
+  - {fileID: 8504555003598468025}
   m_RecoverableObjects: []
   duration: 10
   playbackSpeed: 1
   isLooping: 0
   sceneRoot: {fileID: 0}
---- !u!1 &5118634485331141025
+--- !u!1 &7309929609338925383
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -62,95 +64,89 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4030084923294896952}
-  - component: {fileID: 7035850707085789703}
+  - component: {fileID: 1860019427495639431}
+  - component: {fileID: 8504555003598468025}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: ActorTrackGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4030084923294896952
+--- !u!4 &1860019427495639431
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5118634485331141025}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4168851543367354693}
-  m_Father: {fileID: 7952729591089773380}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7035850707085789703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5118634485331141025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1308156719, guid: 603043be3babbf44188404cd589ac0c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ordinal: -1
-  timelineTracks:
-  - {fileID: 8502952825553704632}
-  path: 
-  parentName: 
-  localPosition: {x: 0, y: 0, z: 0}
-  localRotation: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &8188835089321794974
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4168851543367354693}
-  - component: {fileID: 8502952825553704632}
-  m_Layer: 0
-  m_Name: Curve Track
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4168851543367354693
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8188835089321794974}
+  m_GameObject: {fileID: 7309929609338925383}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4030084923294896952}
+  m_Father: {fileID: 7952729591089773380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8502952825553704632
+--- !u!114 &8504555003598468025
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8188835089321794974}
+  m_GameObject: {fileID: 7309929609338925383}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -58073760, guid: 603043be3babbf44188404cd589ac0c7, type: 3}
+  m_Script: {fileID: 11500000, guid: 8803515647708624fa7b01bf468c64c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ordinal: -1
-  trackGroup: {fileID: 7035850707085789703}
-  timelineItems: []
-  timelineActions: []
+  timelineTracks: []
+  path: 
+  parentName: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &7736715422426657867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 389278993613470804}
+  - component: {fileID: 4445323645349394716}
+  m_Layer: 0
+  m_Name: DirectorGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &389278993613470804
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736715422426657867}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7952729591089773380}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4445323645349394716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7736715422426657867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b08762e7bb581c4a95b31175ec0e404, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timelineTracks: []

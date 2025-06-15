@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TimelineEditorInternal;
+using TimelineRuntime;
 using UnityEditor;
 using UnityEngine;
 using UnityEditorInternal;
@@ -29,7 +30,7 @@ namespace TimelineEditor
             private readonly int m_ControlID = 0;
 
             // Which item was selected
-            private AnimationClip m_SelectedClip = null;
+            private Timeline m_SelectedClip = null;
 
             // Which view should we send it to.
             private readonly GUIView m_SourceView;
@@ -40,7 +41,7 @@ namespace TimelineEditor
                 m_SourceView = GUIView.current;
             }
 
-            public static AnimationClip GetSelectedClipForControl(int controlID, AnimationClip clip)
+            public static Timeline GetSelectedClipForControl(int controlID, Timeline clip)
             {
                 Event evt = Event.current;
                 if (evt.type == EventType.ExecuteCommand && evt.commandName == kPopupMenuChangedMessage)
@@ -61,7 +62,7 @@ namespace TimelineEditor
                 return clip;
             }
 
-            public static void SetSelectedClip(AnimationClip clip)
+            public static void SetSelectedClip(Timeline clip)
             {
                 if (instance == null)
                 {
@@ -85,11 +86,11 @@ namespace TimelineEditor
         }
 
 
-        private void DisplayClipMenu(Rect position, int controlID, AnimationClip clip)
+        private void DisplayClipMenu(Rect position, int controlID, Timeline clip)
         {
-            AnimationClip[] clips = GetOrderedClipList();
+            Timeline clips = GetOrderedClipList();
             GUIContent[] menuContent = GetClipMenuContent(clips);
-            int selected = ClipToIndex(clips, clip);
+            int selected = 0;
 
             // Center popup menu around button widget
             if (Application.platform == RuntimePlatform.OSXEditor)
@@ -101,16 +102,16 @@ namespace TimelineEditor
 
             EditorUtility.DisplayCustomMenu(position, menuContent, null, selected, (userData, options, index) =>
             {
-                if (index < clips.Length)
+                if (index < 1)
                 {
-                    ClipPopupCallbackInfo.SetSelectedClip(clips[index]);
+                    ClipPopupCallbackInfo.SetSelectedClip(clips);
                 }
                 else
                 {
-                    AnimationClip newClip = AnimationWindowUtility.CreateNewClip(state.selection.rootGameObject.name);
+                    Timeline newClip = TimelineWindowUtility.CreateNewClip(state.selection.rootGameObject.name);
                     if (newClip)
                     {
-                        AnimationWindowUtility.AddClipToAnimationPlayerComponent(state.activeAnimationPlayer, newClip);
+                        //TimelineWindowUtility.AddClipToAnimationPlayerComponent(state.activeAnimationPlayer, newClip);
                         ClipPopupCallbackInfo.SetSelectedClip(newClip);
                     }
                 }
@@ -120,7 +121,7 @@ namespace TimelineEditor
         }
 
         // (case 1029160) Modified version of EditorGUI.DoPopup to fit large data list query.
-        private AnimationClip DoClipPopup(AnimationClip clip, GUIStyle style)
+        private Timeline DoClipPopup(Timeline clip, GUIStyle style)
         {
             Rect position = EditorGUILayout.GetControlRect(false, EditorGUI.kSingleLineHeight, style);
             int controlID = GUIUtility.GetControlID(s_ClipPopupHash, FocusType.Keyboard, position);
@@ -169,10 +170,10 @@ namespace TimelineEditor
             if (state.selection.canChangeAnimationClip)
             {
                 EditorGUI.BeginChangeCheck();
-                var newClip = DoClipPopup(state.activeAnimationClip, AnimationWindowStyles.animClipToolbarPopup);
+                var newClip = DoClipPopup(state.activeTimeline, AnimationWindowStyles.animClipToolbarPopup);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    state.activeAnimationClip = newClip;
+                    state.activeTimeline = newClip;
 
                     //  Layout has changed, bail out now.
                     EditorGUIUtility.ExitGUI();
@@ -180,52 +181,41 @@ namespace TimelineEditor
             }
             else if (state.activeAnimationClip != null)
             {
-                Rect r = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, AnimationWindowStyles.toolbarLabel);
-                EditorGUI.LabelField(r, CurveUtility.GetClipName(state.activeAnimationClip), AnimationWindowStyles.toolbarLabel);
+                Rect r = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, TimelineWindowStyles.toolbarLabel);
+                EditorGUI.LabelField(r, CurveUtility.GetClipName(state.activeTimeline), TimelineWindowStyles.toolbarLabel);
             }
         }
 
-        private GUIContent[] GetClipMenuContent(AnimationClip[] clips)
+        private GUIContent[] GetClipMenuContent(Timeline clips)
         {
-            int size = clips.Length;
+            int size = 1;
             if (state.selection.canCreateClips)
                 size += 2;
 
             GUIContent[] content = new GUIContent[size];
-            for (int i = 0; i < clips.Length; i++)
-            {
-                content[i] = new GUIContent(CurveUtility.GetClipName(clips[i]));
-            }
+            content[0] = new GUIContent(CurveUtility.GetClipName(clips));
 
             if (state.selection.canCreateClips)
             {
                 content[content.Length - 2] = GUIContent.none;
-                content[content.Length - 1] = AnimationWindowStyles.createNewClip;
+                content[content.Length - 1] = TimelineWindowStyles.createNewClip;
             }
 
             return content;
         }
 
-        private AnimationClip[] GetOrderedClipList()
+        private Timeline GetOrderedClipList()
         {
-            AnimationClip[] clips = new AnimationClip[0];
+            Timeline clips = null;
             if (state.activeRootGameObject != null)
-                clips = AnimationUtility.GetAnimationClips(state.activeRootGameObject);
-
-            //Using AlphaNum/Natural Compare to sort clips
-            Array.Sort(clips, (AnimationClip clip1, AnimationClip clip2) => EditorUtility.NaturalCompareObjectNames(clip1, clip2));
+                clips = state.activeRootGameObject.GetComponent<Timeline>();
 
             return clips;
         }
 
-        private int ClipToIndex(AnimationClip[] clips, AnimationClip clip)
+        private int ClipToIndex(Timeline clips, AnimationClip clip)
         {
-            for (int index = 0; index < clips.Length; ++index)
-            {
-                if (clips[index] == clip)
-                    return index;
-            }
-
+            
             return 0;
         }
     }

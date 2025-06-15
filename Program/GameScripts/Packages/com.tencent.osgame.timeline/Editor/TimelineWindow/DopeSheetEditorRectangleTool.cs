@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEditorInternal;
 using System.Collections.Generic;
+using TimelineEditorInternal;
 using UnityEditor;
+using DopeLine = UnityEditorInternal.DopeLine;
+using DopeSheetEditor = UnityEditorInternal.DopeSheetEditor;
 
 namespace TimelineEditor
 {
@@ -32,8 +35,8 @@ namespace TimelineEditor
             public Vector2 rightLabelAnchor;
         }
 
-        private DopeSheetEditor m_DopeSheetEditor;
-        private AnimationWindowState m_State;
+        private TimelineEditorInternal.DopeSheetEditor m_DopeSheetEditor;
+        private TimelineWindowState m_State;
 
         private ToolLayout m_Layout;
 
@@ -64,7 +67,7 @@ namespace TimelineEditor
         public override void Initialize(UnityEditor.TimeArea timeArea)
         {
             base.Initialize(timeArea);
-            m_DopeSheetEditor = timeArea as DopeSheetEditor;
+            m_DopeSheetEditor = timeArea as TimelineEditorInternal.DopeSheetEditor;
             m_State = m_DopeSheetEditor.state;
 
             if (m_SelectionBoxes == null)
@@ -266,19 +269,19 @@ namespace TimelineEditor
 
             float heightCumul = 0f;
 
-            List<DopeLine> dopelines = m_State.dopelines;
+            List<TimelineEditorInternal.DopeLine> dopelines = m_State.dopelines;
             for (int i = 0; i < dopelines.Count; ++i)
             {
-                DopeLine dopeline = dopelines[i];
+                TimelineEditorInternal.DopeLine dopeline = dopelines[i];
 
-                float dopelineHeight = (dopeline.tallMode ? AnimationWindowHierarchyGUI.k_DopeSheetRowHeightTall : AnimationWindowHierarchyGUI.k_DopeSheetRowHeight);
+                float dopelineHeight = (dopeline.tallMode ? TimelineWindowHierarchyGUI.k_DopeSheetRowHeightTall : TimelineWindowHierarchyGUI.k_DopeSheetRowHeight);
 
                 if (!dopeline.isMasterDopeline)
                 {
                     int length = dopeline.keys.Count;
                     for (int j = 0; j < length; j++)
                     {
-                        AnimationWindowKeyframe keyframe = dopeline.keys[j];
+                        TimelineWindowKeyframe keyframe = dopeline.keys[j];
                         if (m_State.KeyIsSelected(keyframe))
                         {
                             if (firstKey)

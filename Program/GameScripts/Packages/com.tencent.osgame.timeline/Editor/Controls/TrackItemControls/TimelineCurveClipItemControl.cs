@@ -10,7 +10,7 @@ namespace TimelineEditor
     {
         private static float ms_MouseDownOffset = -1f;
         protected KeyframeContext cacheKey;
-        protected Rect curveCanvasPosition;
+        private Rect curveCanvasPosition;
         protected Rect curveTrackSafeArea;
 
         protected bool isCurveClipEmpty = true;
@@ -27,7 +27,12 @@ namespace TimelineEditor
         private const float Threshold = 0.0001f;
         private bool _currentlyEditingRotation;
         public TimelineClipCurveWrapper ClipCurveWrapper=>Wrapper as TimelineClipCurveWrapper;
+        private TimeEditor m_AnimEditor;
 
+        public TimelineCurveClipItemControl()
+        {
+            m_AnimEditor = UnityEngine.ScriptableObject.CreateInstance(typeof(TimeEditor)) as TimeEditor;
+        }
         private int MousePositionOffsetFrame
         {
             get

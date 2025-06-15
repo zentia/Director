@@ -20,8 +20,8 @@ namespace TimelineEditor
     internal class TimeEditor : ScriptableObject
     {
         // Active Animation windows
-        private static List<TimeEditor> s_AnimationWindows = new List<TimeEditor>();
-        public static List<TimeEditor> GetAllAnimationWindows() { return s_AnimationWindows; }
+        private static List<TimeEditor> s_TimelineWindows = new List<TimeEditor>();
+        public static List<TimeEditor> GetAllAnimationWindows() { return s_TimelineWindows; }
         public bool stateDisabled { get { return m_State.disabled; } }
 
         [SerializeField] private SplitterState m_HorizontalSplitter;
@@ -358,7 +358,7 @@ namespace TimelineEditor
         public void OnEnable()
         {
             hideFlags = HideFlags.HideAndDontSave;
-            s_AnimationWindows.Add(this);
+            s_TimelineWindows.Add(this);
 
             if (m_State == null)
             {
@@ -386,7 +386,7 @@ namespace TimelineEditor
 
         public void OnDisable()
         {
-            s_AnimationWindows.Remove(this);
+            s_TimelineWindows.Remove(this);
 
             if (m_CurveEditor != null)
             {
@@ -452,7 +452,7 @@ namespace TimelineEditor
 
         private void SetupWizardOnGUI(Rect position)
         {
-            GUI.Label(position, GUIContent.none, AnimationWindowStyles.dopeSheetBackground);
+            GUI.Label(position, GUIContent.none, TimelineWindowStyles.dopeSheetBackground);
 
             Rect positionWithoutScrollBar = new Rect(position.x, position.y, position.width - kSliderThickness, position.height - kSliderThickness);
             GUI.BeginClip(positionWithoutScrollBar);
@@ -466,9 +466,9 @@ namespace TimelineEditor
 
             if (animatableObject)
             {
-                var missingObjects = (!m_State.activeRootGameObject && !m_State.activeAnimationClip) ? AnimationWindowStyles.animatorAndAnimationClip.text : AnimationWindowStyles.animationClip.text;
+                var missingObjects = (!m_State.activeRootGameObject && !m_State.activeAnimationClip) ? TimelineWindowStyles.animatorAndAnimationClip.text : TimelineWindowStyles.animationClip.text;
 
-                string txt = String.Format(AnimationWindowStyles.formatIsMissing.text, m_State.activeGameObject.name, missingObjects);
+                string txt = String.Format(TimelineWindowStyles.formatIsMissing.text, m_State.activeGameObject.name, missingObjects);
 
                 const float buttonWidth = 70f;
                 const float buttonHeight = 20f;
@@ -497,9 +497,9 @@ namespace TimelineEditor
             {
                 Color oldColor = GUI.color;
                 GUI.color = Color.gray;
-                Vector2 textSize = GUI.skin.label.CalcSize(AnimationWindowStyles.noAnimatableObjectSelectedText);
+                Vector2 textSize = GUI.skin.label.CalcSize(TimelineWindowStyles.noAnimatableObjectSelectedText);
                 Rect labelRect = new Rect(positionWithoutScrollBar.width * .5f - textSize.x * .5f, positionWithoutScrollBar.height * .5f - textSize.y * .5f, textSize.x, textSize.y);
-                GUI.Label(labelRect, AnimationWindowStyles.noAnimatableObjectSelectedText);
+                GUI.Label(labelRect, TimelineWindowStyles.noAnimatableObjectSelectedText);
                 GUI.color = oldColor;
             }
             GUI.EndClip();
@@ -765,7 +765,7 @@ namespace TimelineEditor
         {
             using (new EditorGUI.DisabledScope(!selection.animationIsEditable))
             {
-                if (GUILayout.Button(AnimationWindowStyles.addEventContent, AnimationWindowStyles.animClipToolbarButton))
+                if (GUILayout.Button(TimelineWindowStyles.addEventContent, TimelineWindowStyles.animClipToolbarButton))
                     m_Events.AddEvent(m_State.currentTime, selection.rootGameObject, selection.animationClip);
             }
         }
@@ -775,7 +775,7 @@ namespace TimelineEditor
             bool canAddKey = selection.animationIsEditable && m_State.allCurves.Count != 0;
             using (new EditorGUI.DisabledScope(!canAddKey))
             {
-                if (GUILayout.Button(AnimationWindowStyles.addKeyframeContent, AnimationWindowStyles.animClipToolbarButton))
+                if (GUILayout.Button(TimelineWindowStyles.addKeyframeContent, TimelineWindowStyles.animClipToolbarButton))
                 {
                     SaveCurveEditorKeySelection();
                     var keyTime = TimelineKeyTime.Time(m_State.currentTime, m_State.frameRate);
@@ -950,7 +950,7 @@ namespace TimelineEditor
         [Shortcut("Animation/Key Selected", null, KeyCode.K)]
         static void KeySelected(ShortcutArguments args)
         {
-            NewTimelineWindow animationWindow = NewTimelineWindow.GetAllAnimationWindows().Find(aw => (aw.state.previewing || aw == EditorWindow.focusedWindow));
+            NewTimelineWindow animationWindow = NewTimelineWindow.GetAllTimelineWindows().Find(aw => (aw.state.previewing || aw == EditorWindow.focusedWindow));
             if (animationWindow == null)
                 return;
 
@@ -968,7 +968,7 @@ namespace TimelineEditor
         [Shortcut("Animation/Key Modified", null, KeyCode.K, ShortcutModifiers.Shift)]
         static void KeyModified(ShortcutArguments args)
         {
-            NewTimelineWindow animationWindow = NewTimelineWindow.GetAllAnimationWindows().Find(aw => (aw.state.previewing || aw == EditorWindow.focusedWindow));
+            NewTimelineWindow animationWindow = NewTimelineWindow.GetAllTimelineWindows().Find(aw => (aw.state.previewing || aw == EditorWindow.focusedWindow));
             if (animationWindow == null)
                 return;
 

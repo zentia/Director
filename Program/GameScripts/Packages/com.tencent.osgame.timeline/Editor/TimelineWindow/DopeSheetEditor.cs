@@ -5,6 +5,13 @@ using System.Collections.Generic;
 using Event = UnityEngine.Event;
 using Object = UnityEngine.Object;
 using System.Collections;
+using TimelineEditor;
+using ChangedCurve = UnityEditor.ChangedCurve;
+using ControlPointRenderer = UnityEditor.ControlPointRenderer;
+using CurveMenuManager = UnityEditor.CurveMenuManager;
+using CurveUpdater = UnityEditor.CurveUpdater;
+using KeyIdentifier = UnityEditor.KeyIdentifier;
+using TimeArea = UnityEditor.TimeArea;
 
 namespace TimelineEditorInternal
 {
@@ -220,7 +227,7 @@ namespace TimelineEditorInternal
 
         DopeSheetControlPointRenderer m_PointRenderer;
 
-        DopeSheetEditorRectangleTool m_RectangleTool;
+        TimelineEditor.DopeSheetEditorRectangleTool m_RectangleTool;
 
         internal int assetPreviewManagerID
         {
@@ -290,7 +297,7 @@ namespace TimelineEditorInternal
 
             if (m_RectangleTool == null)
             {
-                m_RectangleTool = new DopeSheetEditorRectangleTool();
+                m_RectangleTool = new TimelineEditor.DopeSheetEditorRectangleTool();
                 m_RectangleTool.Initialize(this);
             }
         }
@@ -397,7 +404,7 @@ namespace TimelineEditorInternal
             if (Event.current.type != EventType.Repaint)
                 return;
 
-            AnimationWindowStyles.eventBackground.Draw(position, false, false, false, false);
+            TimelineWindowStyles.eventBackground.Draw(position, false, false, false, false);
         }
 
         void UpdateSpritePreviewCacheSize()

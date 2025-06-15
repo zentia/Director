@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using TimelineEditorInternal;
+using TimelineRuntime;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -11,8 +12,8 @@ namespace TimelineEditor
     public sealed class NewTimelineWindow : EditorWindow, IHasCustomMenu
     {
         // Active Animation windows
-        private static List<NewTimelineWindow> s_AnimationWindows = new List<NewTimelineWindow>();
-        internal static List<NewTimelineWindow> GetAllAnimationWindows() { return s_AnimationWindows; }
+        private static List<NewTimelineWindow> s_TimelineWindows = new List<NewTimelineWindow>();
+        internal static List<NewTimelineWindow> GetAllTimelineWindows() { return s_TimelineWindows; }
 
         private TimeEditor m_AnimEditor;
 
@@ -213,7 +214,7 @@ namespace TimelineEditor
                 m_AnimEditor.hideFlags = HideFlags.HideAndDontSave;
             }
 
-            s_AnimationWindows.Add(this);
+            s_TimelineWindows.Add(this);
             titleContent = GetLocalizedTitleContent();
 
             m_DefaultTitleContent = titleContent;
@@ -226,7 +227,7 @@ namespace TimelineEditor
 
         void OnDisable()
         {
-            s_AnimationWindows.Remove(this);
+            s_TimelineWindows.Remove(this);
             m_AnimEditor.OnDisable();
 
             Undo.undoRedoEvent -= UndoRedoPerformed;
@@ -312,16 +313,10 @@ namespace TimelineEditor
                 m_AnimEditor.OnLostFocus();
         }
 
-        [UnityEditor.Callbacks.OnOpenAsset]
-        static bool OnOpenAsset(int instanceID, int line)
+        [MenuItem("Window/Timeline/NewEditor", false, 10)]
+        static void ShowWindow()
         {
-            var clip = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
-            if (clip)
-            {
-                EditorWindow.GetWindow<NewTimelineWindow>();
-                return true;
-            }
-            return false;
+            EditorWindow.GetWindow<NewTimelineWindow>();
         }
 
         internal bool EditGameObject(GameObject gameObject)

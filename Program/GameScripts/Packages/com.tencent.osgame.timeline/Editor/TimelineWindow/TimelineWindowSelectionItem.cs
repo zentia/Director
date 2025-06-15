@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Collections;
+using TimelineRuntime;
 using Object = UnityEngine.Object;
 
 namespace TimelineEditorInternal
@@ -14,6 +15,7 @@ namespace TimelineEditorInternal
         [SerializeField] private GameObject m_GameObject;
         [SerializeField] private ScriptableObject m_ScriptableObject;
         [SerializeField] private AnimationClip m_AnimationClip;
+        [SerializeField] private Timeline m_Timeline;
 
         private List<TimelineWindowCurve> m_CurvesCache = null;
 
@@ -26,6 +28,11 @@ namespace TimelineEditorInternal
         public virtual Object sourceObject { get { return (gameObject != null) ? (Object)gameObject : (Object)scriptableObject; } }
 
         public virtual AnimationClip animationClip { get { return m_AnimationClip; } set { m_AnimationClip = value; } }
+        public virtual Timeline timeline
+        {
+            get { return m_Timeline; }
+            set { m_Timeline = value; }
+        }
 
         public virtual GameObject rootGameObject
         {
@@ -55,7 +62,7 @@ namespace TimelineEditorInternal
             get
             {
                 // To be editable, a selection must at least contain an animation clip.
-                return (animationClip == null);
+                return (timeline == null);
             }
         }
 
@@ -64,7 +71,7 @@ namespace TimelineEditorInternal
             get
             {
                 // Clip is imported and shouldn't be edited
-                if (animationClip && (animationClip.hideFlags & HideFlags.NotEditable) != 0)
+                if (timeline && (timeline.hideFlags & HideFlags.NotEditable) != 0)
                     return false;
 
                 // Object is a prefab - shouldn't be edited
@@ -79,10 +86,10 @@ namespace TimelineEditorInternal
         {
             get
             {
-                if (!animationClip)
+                if (!timeline)
                     return false;
                 // Clip is imported and shouldn't be edited
-                if ((animationClip.hideFlags & HideFlags.NotEditable) != 0)
+                if ((timeline.hideFlags & HideFlags.NotEditable) != 0)
                     return false;
                 if (!AssetDatabase.IsOpenForEdit(animationClip, StatusQueryOptions.UseCachedIfPossible))
                     return false;
@@ -153,7 +160,7 @@ namespace TimelineEditorInternal
             }
         }
 
-        public virtual bool canAddCurves
+        public virtual bool  canAddCurves
         {
             get
             {
@@ -199,7 +206,7 @@ namespace TimelineEditorInternal
                 {
                     m_CurvesCache = new List<TimelineWindowCurve>();
 
-                    if (animationClip != null)
+                    if (timeline != null)
                     {
                         EditorCurveBinding[] curveBindings = AnimationUtility.GetCurveBindings(animationClip);
                         EditorCurveBinding[] objectCurveBindings = AnimationUtility.GetObjectReferenceCurveBindings(animationClip);

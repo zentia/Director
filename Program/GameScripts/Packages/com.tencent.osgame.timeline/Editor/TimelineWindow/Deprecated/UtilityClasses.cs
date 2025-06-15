@@ -1,3 +1,4 @@
+using TimelineRuntime;
 using UnityEditor;
 using UnityEngine;
 
@@ -115,10 +116,10 @@ namespace TimelineEditor
             curve.MoveKey(keyIndex, key);
         }
 
-        static public string GetClipName(AnimationClip clip)
+        static public string GetClipName(Timeline clip)
         {
             if (clip == null)
-                return "[No Clip]";
+                return "[No Timeline]";
 
             string name = clip.name;
 

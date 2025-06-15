@@ -944,28 +944,28 @@ namespace TimelineEditorInternal
         }
 
         // Add animator, controller and clip to gameobject if they are missing to make this gameobject animatable
-        public static bool InitializeGameobjectForAnimation(GameObject animatedObject)
-        {
-            Component animationPlayer = GetClosestAnimationPlayerComponentInParents(animatedObject.transform);
-            if (animationPlayer == null)
-            {
-                var newClip = CreateNewClip(animatedObject.name);
-
-                if (newClip == null)
-                    return false;
-
-                animationPlayer = EnsureActiveAnimationPlayer(animatedObject);
-                Undo.RecordObject(animationPlayer, "Add animation clip");
-                bool success = AddClipToAnimationPlayerComponent(animationPlayer, newClip);
-
-                if (!success)
-                    Object.DestroyImmediate(animationPlayer);
-
-                return success;
-            }
-
-            return EnsureAnimationPlayerHasClip(animationPlayer);
-        }
+        // public static bool InitializeGameobjectForAnimation(GameObject animatedObject)
+        // {
+        //     Component animationPlayer = GetClosestAnimationPlayerComponentInParents(animatedObject.transform);
+        //     if (animationPlayer == null)
+        //     {
+        //         var newClip = CreateNewClip(animatedObject.name);
+        //
+        //         if (newClip == null)
+        //             return false;
+        //
+        //         animationPlayer = EnsureActiveAnimationPlayer(animatedObject);
+        //         Undo.RecordObject(animationPlayer, "Add animation clip");
+        //         bool success = AddClipToAnimationPlayerComponent(animationPlayer, newClip);
+        //
+        //         if (!success)
+        //             Object.DestroyImmediate(animationPlayer);
+        //
+        //         return success;
+        //     }
+        //
+        //     return EnsureAnimationPlayerHasClip(animationPlayer);
+        // }
 
         // Ensures that the gameobject or it's parents have an animation player component. If not try to create one.
         public static Component EnsureActiveAnimationPlayer(GameObject animatedObject)
@@ -997,7 +997,7 @@ namespace TimelineEditorInternal
             AnimationMode.StopAnimationMode();
 
             // By default add it the animation to the Animator component.
-            return AddClipToAnimationPlayerComponent(animationPlayer, newClip);
+            return true;
         }
 
         public static bool AddClipToAnimationPlayerComponent(Component animationPlayer, AnimationClip newClip)
@@ -1049,7 +1049,7 @@ namespace TimelineEditorInternal
         }
 
         internal static string s_LastPathUsedForNewClip;
-        internal static AnimationClip CreateNewClip(string gameObjectName)
+        internal static Timeline CreateNewClip(string gameObjectName)
         {
             // Go forward with presenting user a save clip dialog
             string message = string.Format(L10n.Tr("Create a new animation for the game object '{0}':"), gameObjectName);
@@ -1062,7 +1062,7 @@ namespace TimelineEditorInternal
                     newClipDirectory = directoryPath;
                 }
             }
-            string newClipPath = EditorUtility.SaveFilePanelInProject(L10n.Tr("Create New Animation"), "New Animation", "anim", message, newClipDirectory);
+            string newClipPath = EditorUtility.SaveFilePanelInProject(L10n.Tr("Create New Animation"), "New Timeline", "anim", message, newClipDirectory);
 
             // If user canceled or save path is invalid, we can't create a clip
             if (newClipPath == "")
@@ -1074,28 +1074,11 @@ namespace TimelineEditorInternal
         // Create a new animation clip asset for gameObject at a certain asset path.
         // The clipPath parameter must be a full asset path ending with '.anim'. e.g. "Assets/Animations/New Clip.anim"
         // This function will overwrite existing .anim files.
-        internal static AnimationClip CreateNewClipAtPath(string clipPath)
+        internal static Timeline CreateNewClipAtPath(string clipPath)
         {
             s_LastPathUsedForNewClip = clipPath;
 
-            var newClip = new AnimationClip();
-
-            var info = AnimationUtility.GetAnimationClipSettings(newClip);
-            info.loopTime = true;
-            AnimationUtility.SetAnimationClipSettingsNoDirty(newClip, info);
-
-            AnimationClip asset = AssetDatabase.LoadMainAssetAtPath(clipPath) as AnimationClip;
-
-            if (asset)
-            {
-                newClip.name = asset.name;
-                EditorUtility.CopySerialized(newClip, asset);
-                AssetDatabase.SaveAssets();
-                Object.DestroyImmediate(newClip);
-                return asset;
-            }
-
-            AssetDatabase.CreateAsset(newClip, clipPath);
+            var newClip = new GameObject("Timeline",typeof(Timeline)).GetComponent<Timeline>();
             return newClip;
         }
 
@@ -1129,12 +1112,7 @@ namespace TimelineEditorInternal
         {
             while (true)
             {
-                if (tr.TryGetComponent(out Animator animator))
-                {
-                    return animator;
-                }
-
-                if (tr.TryGetComponent(out Animation animation))
+                if (tr.TryGetComponent(out Timeline animation))
                 {
                     return animation;
                 }

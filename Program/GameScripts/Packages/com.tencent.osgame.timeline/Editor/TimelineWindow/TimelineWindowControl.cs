@@ -936,7 +936,6 @@ namespace TimelineEditorInternal
         private void CreateCandidateClip()
         {
             m_CandidateClip = new AnimationClip();
-            m_CandidateClip.legacy = state.activeAnimationClip.legacy;
             m_CandidateClip.name = "CandidateClip";
         }
 

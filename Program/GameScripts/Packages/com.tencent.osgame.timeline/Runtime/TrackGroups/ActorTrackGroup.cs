@@ -27,14 +27,14 @@ namespace TimelineRuntime
 #if UNITY_EDITOR
         private void OnPathChanged()
         {
-            Timeline.UnLoad(m_Asset);
+            Timeline.UnLoad?.Invoke(m_Asset);
             m_Asset = null;
             m_Actors.Clear();
 
             if (string.IsNullOrEmpty(path))
                 return;
 
-            m_Asset = Timeline.LoadAsset(path);
+            m_Asset = Timeline.LoadAsset?.Invoke(path);
             if (m_Asset != null)
             {
                 m_Actors.Add(m_Asset);

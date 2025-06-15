@@ -3,7 +3,11 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using TimelineEditor;
+using TimelineRuntime;
 using UnityEditor.IMGUI.Controls;
+using CurveUtility = UnityEditor.CurveUtility;
+using RotationCurveInterpolation = UnityEditor.RotationCurveInterpolation;
 
 namespace TimelineEditorInternal
 {
@@ -11,7 +15,7 @@ namespace TimelineEditorInternal
     {
         public TimelineWindowState state { get; set; }
 
-        readonly GUIContent k_AnimatePropertyLabel = EditorGUIUtility.TrTextContent("Add Property");
+        readonly GUIContent k_AnimatePropertyLabel = EditorGUIUtility.TrTextContent("Add Track Group");
 
         private GUIStyle m_AnimationRowEvenStyle;
         private GUIStyle m_AnimationRowOddStyle;
@@ -162,23 +166,36 @@ namespace TimelineEditorInternal
 
             Rect rectWithMargin = new Rect(rect.xMin + xMargin, rect.yMin + yMargin, rect.width - xMargin * 2f, rect.height - yMargin * 2f);
 
+            if (GUI.Button(rectWithMargin, k_AnimatePropertyLabel, GUI.skin.button))
+            {
+                GenericMenu menu = new GenericMenu();
+                menu.AddItem(new GUIContent("ActorTrackGroup"),false, OnNewActorTrackGroupAdded, null);
+                menu.AddItem(new GUIContent("DirectorGroup"),false, OnNewDirectorGroupAdded, null);
+                menu.ShowAsContext();    
+            }
             // case 767863.
             // This control id is unique to the hierarchy node it refers to.
             // The tree view only renders the elements that are visible, and will cause
             // the control id counter to shift when scrolling through the view.
-            if (DoTreeViewButton(m_HierarchyItemButtonControlIDs[row], rectWithMargin, k_AnimatePropertyLabel, GUI.skin.button))
-            {
-                AddCurvesPopupHierarchyDataSource.showEntireHierarchy = true;
-
-                if (AddCurvesPopup.ShowAtPosition(rectWithMargin, state, OnNewCurveAdded))
-                {
-                    GUIUtility.ExitGUI();
-                }
-            }
+            // if (DoTreeViewButton(m_HierarchyItemButtonControlIDs[row], rectWithMargin, k_AnimatePropertyLabel, GUI.skin.button))
+            // {
+            //     AddCurvesPopupHierarchyDataSource.showEntireHierarchy = true;
+            //
+            //     if (AddCurvesPopup.ShowAtPosition(rectWithMargin, state, OnNewCurveAdded))
+            //     {
+            //         GUIUtility.ExitGUI();
+            //     }
+            // }
         }
 
-        private void OnNewCurveAdded(AddCurvesPopupPropertyNode node)
+        private void OnNewActorTrackGroupAdded(object userdata)
         {
+            TimelineFactory.CreateTrackGroup(state.activeTimeline, typeof(ActorTrackGroup), "ActorTrackGroup");
+        }
+
+        private void OnNewDirectorGroupAdded(object userdata)
+        {
+            TimelineFactory.CreateTrackGroup(state.activeTimeline, typeof(DirectorGroup), "DirectorGroup");
         }
 
         private void DoRowBackground(Rect rect, int row)

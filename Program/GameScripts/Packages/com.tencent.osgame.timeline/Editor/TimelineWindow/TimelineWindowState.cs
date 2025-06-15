@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using TimelineEditor;
 using System.Collections.Generic;
+using TimelineRuntime;
 using UnityEditor.IMGUI.Controls;
 using Object = UnityEngine.Object;
 
@@ -83,7 +84,7 @@ namespace TimelineEditorInternal
 
         private List<LiveEditCurve> m_LiveEditSnapshot;
 
-        public const float kDefaultFrameRate = 60.0f;
+        public const float kDefaultFrameRate = 30.0f;
         public const string kEditCurveUndoLabel = "Edit Curve";
 
         public TimelineWindowSelectionItem selection
@@ -139,6 +140,21 @@ namespace TimelineEditorInternal
             }
         }
 
+        public Timeline activeTimeline
+        {
+            get
+            {
+                return selection.timeline;
+            }
+            set
+            {
+                if (selection.canChangeAnimationClip)
+                {
+                    selection.timeline = value;
+                    OnSelectionChanged();
+                }
+            }
+        }
 
         // Previously or currently selected gameobject is considered as the active gameobject
         public GameObject activeGameObject
@@ -1804,8 +1820,8 @@ namespace TimelineEditorInternal
         {
             get
             {
-                if (activeAnimationClip != null)
-                    return new Vector2(activeAnimationClip.startTime, activeAnimationClip.stopTime);
+                if (activeTimeline != null)
+                    return new Vector2(0, activeTimeline.Duration);
 
                 return Vector2.zero;
             }
